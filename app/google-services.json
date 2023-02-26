@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1068993666748",
+    "project_id": "serapp-27cc5",
+    "storage_bucket": "serapp-27cc5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068993666748:android:d156118cc903e548ab7ab9",
+        "android_client_info": {
+          "package_name": "bassamalim.ser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1068993666748-vki7m0fmki5r2lbqbgr5m1dmqitn5ef1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAFJBYokNVYQt1U-4ee-vyrg4AHpFna0Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1068993666748-vki7m0fmki5r2lbqbgr5m1dmqitn5ef1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<defaultsMap>
+
+    <entry>
+        <key>update_url</key>
+        <value>
+            https://drive.google.com/file/d/1IlP4-9EBSUx7xya5YuSv3S_Xokbd8vey/view?usp=sharing
+        </value>
+    </entry>
+
+    <entry>
+        <key>makkah_url</key>
+        <value>tAdKKC3FZhU</value>
+    </entry>
+
+    <entry>
+        <key>madina_url</key>
+        <value>gUC3TjCrwRw</value>
+    </entry>
+
+    <entry>
+        <key>quran_radio_url</key>
+        <value>https://stream.radiojar.com/4wqre23fytzuv</value>
+    </entry>
+
+</defaultsMap>

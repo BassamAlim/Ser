@@ -1,0 +1,23 @@
+<resources>
+
+    <style name="MyDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">?myBg</item>
+        <item name="android:colorAccent">?attr/myPrimary</item>
+        <item name="colorAccent">?myAccent</item>
+        <item name="android:textColorPrimary">?myText</item>
+        <item name="android:textColor">?myText</item>
+        <item name="android:textColorSecondary">@color/grey</item>
+    </style>
+
+    <style name="MyTimePicker" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">?myBg</item>
+        <item name="android:colorAccent">?attr/myPrimary</item>
+        <item name="colorAccent">?myAccent</item>
+        <item name="android:textColorPrimary">?attr/myStrongText</item>
+        <item name="android:textColor">?myText</item>
+        <item name="android:textColorSecondary">?myText</item>
+        <item name="android:colorControlNormal">?myText</item>
+        <item name="android:textColorPrimaryInverse">@color/black</item>
+    </style>
+
+</resources>

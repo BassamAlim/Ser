@@ -1,0 +1,57 @@
+<resources>
+
+    <style name="MainAppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+        <item name="android:timePickerDialogTheme">@style/MyTimePicker</item>
+        <item name="android:timePickerStyle">@style/MyTimePicker</item>
+        <item name="materialTimePickerStyle">@style/MyTimePicker</item>
+        <item name="materialTimePickerTheme">@style/MyTimePicker</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.SplashScreen">
+        // Set the splash screen background, animated icon, and animation duration.
+        <item name="windowSplashScreenBackground">@color/bg</item>
+
+        // Use windowSplashScreenAnimatedIcon to add either a drawable or an
+        // animated drawable. One of these is required.
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icon</item>
+        <!--<item name="windowSplashScreenAnimationDuration">200</item>--> # Required for animated
+        icons
+
+        <item name="android:windowBackground">@color/bg</item>
+
+        // Set the theme of the Activity that directly follows your splash screen.
+        <item name="postSplashScreenTheme">@style/Theme.Dark</item>
+        # Required.
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="Theme.Dark" parent="MainAppTheme">
+        <!-- Primary color -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary</item>
+        <item name="colorOnPrimary">@color/primary</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:textColorPrimary">@color/text</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="titleTextColor">@color/white</item>
+        <!-- My Special Theme -->
+        <item name="myBg">@color/bg</item>
+        <item name="myPrimary">@color/primary</item>
+        <item name="myOnPrimary">@color/text</item>
+        <item name="mySecondary">@color/secondary</item>
+        <item name="myOnSecondary">@color/text</item>
+        <item name="mySurface">@color/surface</item>
+        <item name="myOnSurface">@color/on_surface</item>
+        <item name="myAccent">@color/accent</item>
+        <item name="myAltAccent">@color/alt_accent</item>
+        <item name="myText">@color/text</item>
+        <item name="myStrongText">@color/strong_text</item>
+        <item name="myWeakText">@color/weak_text</item>
+    </style>
+
+</resources>

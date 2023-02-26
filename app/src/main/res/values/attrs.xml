@@ -1,0 +1,18 @@
+<resources>
+
+    <declare-styleable name="MainTheme">
+        <attr name="myBg" format="color|reference" />
+        <attr name="myPrimary" format="color|reference" />
+        <attr name="myOnPrimary" format="color|reference" />
+        <attr name="mySecondary" format="color|reference" />
+        <attr name="myOnSecondary" format="color|reference" />
+        <attr name="mySurface" format="color|reference" />
+        <attr name="myOnSurface" format="color|reference" />
+        <attr name="myAccent" format="color|reference" />
+        <attr name="myAltAccent" format="color|reference" />
+        <attr name="myText" format="color|reference" />
+        <attr name="myStrongText" format="color|reference" />
+        <attr name="myWeakText" format="color|reference" />
+    </declare-styleable>
+
+</resources>

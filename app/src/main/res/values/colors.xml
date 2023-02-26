@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    // Global
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="grey">#484849</color>
+
+    <color name="bg">#111317</color>
+    <color name="primary">#161A1E</color>
+    <color name="on_primary">#BCC2C7</color>
+    <color name="secondary">#212934</color>
+    <color name="on_secondary">#BCBEC0</color>
+    <color name="surface">#212728</color>
+    <color name="on_surface">#959A9E</color>
+    <color name="accent">#DE6006</color>
+    <color name="alt_accent">#3CBB5207</color>
+    <color name="text">#BCC2C7</color>
+    <color name="strong_text">#FCFBF8</color>
+    <color name="weak_text">#6E6E6E</color>
+
+</resources>
