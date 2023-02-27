@@ -58,6 +58,8 @@ class AESVM @Inject constructor(
     }
 
     fun onSaveDialogSubmit(name: String) {
+        if (uiState.value.nameAlreadyExists) return
+
         _uiState.update { it.copy(
             saveDialogShown = false
         )}
@@ -81,7 +83,8 @@ class AESVM @Inject constructor(
 
     fun onKeyPickerCancel() {
         _uiState.update { it.copy(
-            keyPickerShown = false
+            keyPickerShown = false,
+            nameAlreadyExists = false
         )}
     }
 
@@ -112,10 +115,10 @@ class AESVM @Inject constructor(
 
     }
 
-    fun onOpSwitch(b: Boolean) {
+    fun onOpSwitch(isDecrypt: Boolean) {
         _uiState.update { it.copy(
             operation =
-                if (it.operation == Operation.ENCRYPT) Operation.DECRYPT
+                if (isDecrypt) Operation.DECRYPT
                 else Operation.ENCRYPT
         )}
     }
@@ -132,7 +135,7 @@ class AESVM @Inject constructor(
             else Cryptography.decryptAES(text, key!!)
 
         _uiState.update { it.copy(
-            result = result.trim()
+            result = result?.trim() ?: "Failed to ${uiState.value.operation.name.lowercase()}"
         )}
     }
 

@@ -7,7 +7,6 @@ import bassamalim.ser.models.MyKeyPair
 import bassamalim.ser.utils.Utils
 import com.google.gson.Gson
 import javax.crypto.SecretKey
-import javax.crypto.spec.SecretKeySpec
 
 class TempKeyKeeper(
     private val sp: SharedPreferences,
@@ -15,7 +14,7 @@ class TempKeyKeeper(
 ) {
 
     fun storeAESKey(key: SecretKey) {
-        val encodedKey = key.encoded
+        val encodedKey = Utils.toStore(key)
         val keyJson = gson.toJson(encodedKey)
         sp.edit()
             .putString(Prefs.AESKey.key, keyJson)
@@ -23,12 +22,9 @@ class TempKeyKeeper(
     }
 
     fun getAESKey(): SecretKey? {
-        val keyJson = sp.getString(
-            Prefs.AESKey.key,
-            null
-        ) ?: return null
+        val keyJson = sp.getString(Prefs.AESKey.key, null) ?: return null
         val encodedKey = gson.fromJson(keyJson, ByteArray::class.java)
-        return SecretKeySpec(encodedKey, "AES")
+        return Utils.fromStore(encodedKey)
     }
 
     fun storeRSAKey(key: MyKeyPair) {

@@ -32,10 +32,8 @@ class RSAVM @Inject constructor(
     init {
         if (keyPair != null) {
             _uiState.update { it.copy(
-                publicKey = if (keyPair!!.public != null) Utils.encode(keyPair!!.public)
-                else "null",
-                privateKey = if (keyPair!!.private != null) Utils.encode(keyPair!!.private)
-                else "null"
+                publicKey = Utils.encode(keyPair!!.public),
+                privateKey = Utils.encode(keyPair!!.private)
             )}
         }
     }
@@ -69,6 +67,8 @@ class RSAVM @Inject constructor(
     }
 
     fun onSaveDialogSubmit(name: String) {
+        if (uiState.value.nameAlreadyExists) return
+
         _uiState.update { it.copy(
             saveDialogShown = false
         )}
@@ -80,7 +80,8 @@ class RSAVM @Inject constructor(
 
     fun onSaveDialogCancel() {
         _uiState.update { it.copy(
-            saveDialogShown = false
+            saveDialogShown = false,
+            nameAlreadyExists = false
         )}
     }
 
@@ -125,10 +126,10 @@ class RSAVM @Inject constructor(
 
     }
 
-    fun onOpSwitch(b: Boolean) {
+    fun onOpSwitch(isDecrypt: Boolean) {
         _uiState.update { it.copy(
             operation =
-                if (it.operation == Operation.ENCRYPT) Operation.DECRYPT
+                if (isDecrypt) Operation.DECRYPT
                 else Operation.ENCRYPT
         )}
     }
@@ -147,7 +148,7 @@ class RSAVM @Inject constructor(
                 Cryptography.decryptRSA(text, keyPair!!.private)
 
         _uiState.update { it.copy(
-            result = result.trim()
+            result = result?.trim() ?: "Failed to ${uiState.value.operation.name.lowercase()}"
         )}
     }
 

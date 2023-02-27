@@ -2,10 +2,7 @@ package bassamalim.ser.ui.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -136,7 +133,7 @@ fun FramedText(
 }
 
 @Composable
-fun CategoryTitle(
+fun RowScope.CategoryTitle(
     textResId: Int,
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
@@ -146,7 +143,7 @@ fun CategoryTitle(
     MyText(
         text = stringResource(textResId),
         modifier = modifier
-            .fillMaxWidth()
+            .weight(1f)
             .padding(top = 10.dp, bottom = 10.dp, start = 12.dp)
             .padding(padding),
         fontSize = fontSize,

@@ -88,6 +88,7 @@ fun SaveBtn(
 @Composable
 fun SaveKeyDialog(
     shown: Boolean,
+    nameExists: Boolean,
     onTextChange: (String) -> Unit,
     onSubmit: (String) -> Unit,
     onCancel: () -> Unit
@@ -98,7 +99,7 @@ fun SaveKeyDialog(
         shown = shown,
         onDismiss = onCancel
     ) {
-        MyCenterColumn {
+        MyColumn {
             DialogTitle(R.string.save_key)
 
             MyOutlinedTextField(
@@ -110,7 +111,14 @@ fun SaveKeyDialog(
                 modifier = Modifier.padding(vertical = 10.dp)
             )
 
-            MyCenterRow {
+            if (nameExists) {
+                MyText(
+                    text = stringResource(R.string.key_name_exists),
+                    textColor = bassamalim.ser.ui.theme.Negative
+                )
+            }
+
+            MyRow {
                 SecondaryPillBtn(
                     text = stringResource(R.string.cancel),
                     modifier = Modifier
@@ -140,9 +148,10 @@ fun KeyPickerDialog(
 ) {
     MyDialog(
         shown = shown,
+        intrinsicHeight = false,  // because of the lazy column
         onDismiss = onCancel
     ) {
-        MyCenterColumn(
+        MyColumn(
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
         ) {
             DialogTitle(textResId = R.string.pick_key)

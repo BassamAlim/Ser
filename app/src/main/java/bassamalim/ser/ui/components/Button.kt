@@ -219,6 +219,7 @@ fun MyIconBtn(
 fun MyIconBtn(
     imageVector: ImageVector,
     description: String = "",
+    size: Dp = 24.dp,
     tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     onClick: () -> Unit
 ) {
@@ -228,7 +229,8 @@ fun MyIconBtn(
         Icon(
             imageVector = imageVector,
             tint = tint,
-            contentDescription = description
+            contentDescription = description,
+            modifier = Modifier.size(size)
         )
     }
 }

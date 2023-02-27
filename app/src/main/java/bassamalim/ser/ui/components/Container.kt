@@ -56,7 +56,7 @@ fun MyFatColumn(
 }
 
 @Composable
-fun MyCenterColumn(
+fun MyColumn(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -70,13 +70,15 @@ fun MyCenterColumn(
 }
 
 @Composable
-fun MyCenterRow(
+fun MyRow(
+    alignment: Alignment.Vertical = Alignment.CenterVertically,
+    arrangement: Arrangement.Horizontal = Arrangement.SpaceEvenly,
     padding: PaddingValues = PaddingValues(horizontal = 10.dp),
     content: @Composable RowScope.() -> Unit
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = alignment,
+        horizontalArrangement = arrangement,
         modifier = Modifier
             .fillMaxWidth()
             .padding(padding)

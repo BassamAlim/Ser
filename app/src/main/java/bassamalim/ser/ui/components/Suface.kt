@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -50,6 +51,7 @@ fun MyClickableSurface(
     padding: PaddingValues = PaddingValues(vertical = 3.dp, horizontal = 8.dp),
     cornerRadius: Dp = 10.dp,
     elevation: Dp = 6.dp,
+    color: Color = AppTheme.colors.surface,
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -58,7 +60,7 @@ fun MyClickableSurface(
             .fillMaxWidth()
             .padding(padding),
         shape = RoundedCornerShape(cornerRadius),
-        color = AppTheme.colors.surface,
+        color = color,
         elevation = elevation,
     ) {
         Box(

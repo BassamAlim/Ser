@@ -12,6 +12,7 @@ import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
 
 object Utils {
 
@@ -39,6 +40,10 @@ object Utils {
             privateKeyObj
         )
     }
+
+    fun toStore(key: SecretKey): ByteArray = key.encoded
+
+    fun fromStore(key: ByteArray): SecretKey = SecretKeySpec(key, "AES")
 
     fun encode(bytes: ByteArray) = Base64.encodeToString(bytes, Base64.DEFAULT).trim()
 

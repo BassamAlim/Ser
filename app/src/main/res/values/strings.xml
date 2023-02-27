@@ -249,5 +249,10 @@
     <string name="keypair_name">Key pair name</string>
     <string name="pick_keypair">Pick a key pair</string>
     <string name="select_keypair">Select a key pair</string>
+    <string name="new_key">New key</string>
+    <string name="new_keypair">New key pair</string>
+    <string name="key_value">Key value</string>
+    <string name="key_name_exists">Key name already exists</string>
+    <string name="key_value_invalid">Key value is invalid</string>
 
 </resources>

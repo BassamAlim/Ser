@@ -44,18 +44,22 @@ object Cryptography {
     fun decryptAES(
         ciphertext: String,
         secretKey: SecretKey
-    ): String {
-        val decodedCiphertext = Utils.decode(ciphertext)
+    ): String? {
+        return try {
+            val decodedCiphertext = Utils.decode(ciphertext)
 
-        val iv = decodedCiphertext.copyOfRange(0, 16)
-        val decodedCT = decodedCiphertext.copyOfRange(16, decodedCiphertext.size)
+            val iv = decodedCiphertext.copyOfRange(0, 16)
+            val decodedCT = decodedCiphertext.copyOfRange(16, decodedCiphertext.size)
 
-        val ivSpec = IvParameterSpec(iv)
+            val ivSpec = IvParameterSpec(iv)
 
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
-        val plaintext = cipher.doFinal(decodedCT)
-        return plaintext.decodeToString()
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
+            val plaintext = cipher.doFinal(decodedCT)
+            plaintext.decodeToString()
+        } catch (e: Exception) {
+            null
+        }
     }
 
 
@@ -85,14 +89,17 @@ object Cryptography {
     fun decryptRSA(
         ciphertext: String,
         privateKey: PrivateKey
-    ): String {
-        val decodedCiphertext = Utils.decode(ciphertext)
+    ): String? {
+        return try {
+            val decodedCiphertext = Utils.decode(ciphertext)
 
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        cipher.init(Cipher.DECRYPT_MODE, privateKey)
-        val plaintext = cipher.doFinal(decodedCiphertext)
+            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            cipher.init(Cipher.DECRYPT_MODE, privateKey)
 
-        return plaintext.decodeToString()
+            cipher.doFinal(decodedCiphertext).decodeToString()
+        } catch (e: Exception) {
+            null
+        }
     }
 
 }

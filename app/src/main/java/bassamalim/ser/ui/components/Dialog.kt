@@ -19,6 +19,7 @@ import bassamalim.ser.ui.theme.AppTheme
 @Composable
 fun MyDialog(
     shown: Boolean,
+    intrinsicHeight: Boolean = true,
     easyDismiss: Boolean = true,
     onDismiss: () -> Unit = {},
     content: @Composable () -> Unit
@@ -34,13 +35,28 @@ fun MyDialog(
             Surface(
                 color = Color.Transparent
             ) {
-                Box(
-                    Modifier.background(
-                        shape = RoundedCornerShape(16.dp),
-                        color = AppTheme.colors.background
-                    )
-                ) {
-                    content()
+                if (intrinsicHeight) {
+                    Box(
+                        Modifier
+                            .height(IntrinsicSize.Max)
+                            .background(
+                                shape = RoundedCornerShape(16.dp),
+                                color = AppTheme.colors.background
+                            )
+                    ) {
+                        content()
+                    }
+                }
+                else {
+                    Box(
+                        Modifier
+                            .background(
+                                shape = RoundedCornerShape(16.dp),
+                                color = AppTheme.colors.background
+                            )
+                    ) {
+                        content()
+                    }
                 }
             }
         }
