@@ -32,8 +32,10 @@ class RSAVM @Inject constructor(
     init {
         if (keyPair != null) {
             _uiState.update { it.copy(
-                publicKey = Utils.encode(keyPair!!.public),
-                privateKey = Utils.encode(keyPair!!.private)
+                publicKey = if (keyPair!!.public != null) Utils.encode(keyPair!!.public)
+                else "null",
+                privateKey = if (keyPair!!.private != null) Utils.encode(keyPair!!.private)
+                else "null"
             )}
         }
     }

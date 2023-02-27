@@ -1,23 +1,31 @@
 package bassamalim.ser.utils
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
+import androidx.room.Room
+import bassamalim.ser.data.GlobalVals
+import bassamalim.ser.data.Prefs
+import bassamalim.ser.data.database.AppDatabase
+
 object DBUtils {
 
-    /*fun getDB(context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "###DB")
-            .createFromAsset("databases/DB.db")
+    fun getDB(context: Context): AppDatabase {
+        return Room.databaseBuilder(context, AppDatabase::class.java, "SerDB")
+            .createFromAsset("databases/SerDB.db")
             .allowMainThreadQueries()
             .build()
-    }*/
+    }
 
-    /*fun testDB(
+    fun testDB(
         context: Context,
         pref: SharedPreferences = PrefUtils.getPreferences(context)
     ) {
         val lastVer = PrefUtils.getInt(pref, Prefs.LastDBVersion)
-        if (Global.dbVer > lastVer) reviveDB(context)
+        if (GlobalVals.dbVer > lastVer) reviveDB(context)
 
         try {  // if there is a problem in the db it will cause an error
-            getDB(context).abcDao().getAll()
+            getDB(context).aesDao().getAll()
         } catch (e: Exception) {
             reviveDB(context)
         }
@@ -26,15 +34,13 @@ object DBUtils {
     fun reviveDB(context: Context) {
         val pref = PrefUtils.getPreferences(context)
 
-        context.deleteDatabase("###DB")
-
-        // do something before the db is reset
+        context.deleteDatabase("SerDB")
 
         pref.edit()
-            .putInt(Prefs.LastDBVersion.key, Global.dbVer)
+            .putInt(Prefs.LastDBVersion.key, GlobalVals.dbVer)
             .apply()
 
-        Log.i(Global.TAG, "Database Revived")
-    }*/
+        Log.i(GlobalVals.TAG, "Database Revived")
+    }
 
 }

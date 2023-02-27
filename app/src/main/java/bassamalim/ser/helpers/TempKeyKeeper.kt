@@ -2,8 +2,10 @@ package bassamalim.ser.helpers
 
 import android.content.SharedPreferences
 import bassamalim.ser.data.Prefs
+import bassamalim.ser.models.MyByteKeyPair
+import bassamalim.ser.models.MyKeyPair
+import bassamalim.ser.utils.Utils
 import com.google.gson.Gson
-import java.security.KeyPair
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
@@ -29,19 +31,21 @@ class TempKeyKeeper(
         return SecretKeySpec(encodedKey, "AES")
     }
 
-    fun storeRSAKey(key: KeyPair) {
-        val keyJson = gson.toJson(key)
+    fun storeRSAKey(key: MyKeyPair) {
+        val byteKeyPair = Utils.toStore(key)
+        val keyJson = gson.toJson(byteKeyPair)
         sp.edit()
             .putString(Prefs.RSAKey.key, keyJson)
             .apply()
     }
 
-    fun getRSAKey(): KeyPair? {
-        val keyJson = sp.getString(
+    fun getRSAKey(): MyKeyPair? {
+        val keyPairJson = sp.getString(
             Prefs.RSAKey.key,
             null
         ) ?: return null
-        return gson.fromJson(keyJson, KeyPair::class.java)
+        val byteKeyPair = gson.fromJson(keyPairJson, MyByteKeyPair::class.java)
+        return Utils.fromStore(byteKeyPair)
     }
 
 }

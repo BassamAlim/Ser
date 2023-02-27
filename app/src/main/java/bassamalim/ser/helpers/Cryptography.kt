@@ -1,7 +1,11 @@
 package bassamalim.ser.helpers
 
+import bassamalim.ser.models.MyKeyPair
 import bassamalim.ser.utils.Utils
-import java.security.*
+import java.security.KeyPairGenerator
+import java.security.PrivateKey
+import java.security.PublicKey
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -55,10 +59,14 @@ object Cryptography {
     }
 
 
-    fun generateRSAKey(): KeyPair {
+    fun generateRSAKey(): MyKeyPair {
         val kpg = KeyPairGenerator.getInstance("RSA")
-        kpg.initialize(2048, SecureRandom())
-        return kpg.genKeyPair()
+        kpg.initialize(256, SecureRandom())
+        val keyPair = kpg.genKeyPair()
+        return MyKeyPair(
+            public = keyPair.public,
+            private = keyPair.private
+        )
     }
 
     fun encryptRSA(

@@ -140,7 +140,7 @@
     <string name="recitation_settings">Recitation preferences</string>
     <string name="choose_reciter">Choose the reciter</string>
     <string name="qibla_warning">Move your device away from metal objects</string>
-    <string name="thanks">Thank you for using Hidaya</string>
+    <string name="thanks">Thank you for using Ser</string>
     <string name="language_picker_title" translatable="false">Pick the language اختر اللغة</string>
     <string name="recitations">Recitations</string>
     <string name="stop_on_sura_end">Stop at sura end</string>
@@ -237,5 +237,17 @@
     <string name="key_name">Key name</string>
     <string name="pick_key">Pick a key</string>
     <string name="select_key">Select a key</string>
+    <string name="key_pair">Key pair</string>
+    <string name="public_key">Public key</string>
+    <string name="private_key">Private key</string>
+    <string name="no_keypair_available">No key pair available</string>
+    <string name="keypair_available">Key pair available</string>
+    <string name="generate_keypair">Generate key pair</string>
+    <string name="generate_new_keypair">Generate new key pair</string>
+    <string name="import_keypair">Import key pair</string>
+    <string name="save_keypair">Save key pair</string>
+    <string name="keypair_name">Key pair name</string>
+    <string name="pick_keypair">Pick a key pair</string>
+    <string name="select_keypair">Select a key pair</string>
 
 </resources>

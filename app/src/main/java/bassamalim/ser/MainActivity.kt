@@ -7,12 +7,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
-import bassamalim.ser.data.Prefs
+import bassamalim.ser.data.GlobalVals
 import bassamalim.ser.enums.Language
 import bassamalim.ser.nav.Navigator
-import bassamalim.ser.data.GlobalVals
 import bassamalim.ser.ui.theme.AppTheme
 import bassamalim.ser.utils.ActivityUtils
+import bassamalim.ser.utils.DBUtils
 import bassamalim.ser.utils.PrefUtils
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun preLaunch() {
-//        DBUtils.testDB(this, sp)
+        DBUtils.testDB(this, sp)
 
 //        ActivityUtils.onActivityCreateSetLocale(this)
         ActivityUtils.onActivityCreateSetTheme(this)
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun launch() {
-        val shouldWelcome = PrefUtils.getBoolean(sp, Prefs.FirstTime)
+//        val shouldWelcome = PrefUtils.getBoolean(sp, Prefs.FirstTime)
         val navRoute = intent.getStringExtra("start_route")
 
         setContent {

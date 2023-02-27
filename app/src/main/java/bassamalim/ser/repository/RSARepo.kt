@@ -2,8 +2,10 @@ package bassamalim.ser.repository
 
 import bassamalim.ser.data.database.AppDatabase
 import bassamalim.ser.helpers.TempKeyKeeper
+import bassamalim.ser.models.MyByteKeyPair
+import bassamalim.ser.models.MyKeyPair
+import bassamalim.ser.utils.Utils
 import com.google.gson.Gson
-import java.security.KeyPair
 import javax.inject.Inject
 
 class RSARepo @Inject constructor(
@@ -12,16 +14,18 @@ class RSARepo @Inject constructor(
     private val tempKeyKeeper: TempKeyKeeper
 ) {
 
-    fun storeTempKey(key: KeyPair) = tempKeyKeeper.storeRSAKey(key)
+    fun storeTempKey(key: MyKeyPair) = tempKeyKeeper.storeRSAKey(key)
     fun getTempKey() = tempKeyKeeper.getRSAKey()
 
-    fun storeKey(name: String, keyPair: KeyPair) {
-        val keyJson = gson.toJson(keyPair)
+    fun storeKey(name: String, keyPair: MyKeyPair) {
+        val byteKeyPair = Utils.toStore(keyPair)
+        val keyJson = gson.toJson(byteKeyPair)
         db.rsaDao().insert(name, keyJson)
     }
-    fun getKey(name: String): KeyPair {
+    fun getKey(name: String): MyKeyPair {
         val keyJson = db.rsaDao().getKey(name)
-        return gson.fromJson(keyJson, KeyPair::class.java)
+        val byteKeyPair = gson.fromJson(keyJson, MyByteKeyPair::class.java)
+        return Utils.fromStore(byteKeyPair)
     }
 
     fun getKeyNames() = db.rsaDao().getNames()

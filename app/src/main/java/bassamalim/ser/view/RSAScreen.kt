@@ -51,8 +51,8 @@ fun RSAUI(
             ) {
                 MyText(
                     text = stringResource(
-                        if (st.keyAvailable) R.string.key
-                        else R.string.no_key_available
+                        if (st.keyAvailable) R.string.key_pair
+                        else R.string.no_keypair_available
                     ),
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
@@ -62,12 +62,26 @@ fun RSAUI(
                         .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
                 )
 
-                if (st.keyAvailable) CopyBtn(onClick = vm::onCopyPublicKey)
-
                 if (!st.keySaved) SaveBtn(onClick = vm::onSaveKey)
             }
 
             if (st.keyAvailable) {
+                MyCenterRow(
+                    padding = PaddingValues(start = 6.dp, end = 12.dp)
+                ) {
+                    MyText(
+                        text = stringResource(R.string.public_key),
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Start,
+                        textColor = AppTheme.colors.strongText,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
+                    )
+
+                    CopyBtn(onClick = vm::onCopyPublicKey)
+                }
+
                 SelectionContainer(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -78,30 +92,23 @@ fun RSAUI(
                         fontSize = 20.sp
                     )
                 }
-            }
 
-            MyCenterRow(
-                padding = PaddingValues(start = 6.dp, end = 12.dp)
-            ) {
-                MyText(
-                    text = stringResource(
-                        if (st.keyAvailable) R.string.key
-                        else R.string.no_key_available
-                    ),
-                    fontSize = 22.sp,
-                    textAlign = TextAlign.Start,
-                    textColor = AppTheme.colors.strongText,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
-                )
+                MyCenterRow(
+                    padding = PaddingValues(start = 6.dp, end = 12.dp)
+                ) {
+                    MyText(
+                        text = stringResource(R.string.private_key),
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Start,
+                        textColor = AppTheme.colors.strongText,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
+                    )
 
-                if (st.keyAvailable) CopyBtn(onClick = vm::onCopyPrivateKey)
+                    CopyBtn(onClick = vm::onCopyPrivateKey)
+                }
 
-                if (!st.keySaved) SaveBtn(onClick = vm::onSaveKey)
-            }
-
-            if (st.keyAvailable) {
                 SelectionContainer(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -115,7 +122,7 @@ fun RSAUI(
             }
 
             SecondaryPillBtn(
-                text = stringResource(R.string.select_key),
+                text = stringResource(R.string.select_keypair),
                 textColor =
                     if (st.keyAvailable) AppTheme.colors.text
                     else AppTheme.colors.accent,
@@ -124,8 +131,8 @@ fun RSAUI(
 
             SecondaryPillBtn(
                 text = stringResource(
-                    if (st.keyAvailable) R.string.generate_new_key
-                    else R.string.generate_key
+                    if (st.keyAvailable) R.string.generate_new_keypair
+                    else R.string.generate_keypair
                 ),
                 textColor =
                     if (st.keyAvailable) AppTheme.colors.text
@@ -134,7 +141,7 @@ fun RSAUI(
             )
 
             SecondaryPillBtn(
-                text = stringResource(R.string.import_key),
+                text = stringResource(R.string.import_keypair),
                 textColor =
                     if (st.keyAvailable) AppTheme.colors.text
                     else AppTheme.colors.accent,

@@ -6,15 +6,45 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.util.Base64
 import android.widget.Toast
-import java.security.PrivateKey
-import java.security.PublicKey
+import bassamalim.ser.models.MyByteKeyPair
+import bassamalim.ser.models.MyKeyPair
+import java.security.*
+import java.security.spec.PKCS8EncodedKeySpec
+import java.security.spec.X509EncodedKeySpec
 import javax.crypto.SecretKey
 
 object Utils {
 
+    fun toStore(keyPair: MyKeyPair): MyByteKeyPair {
+        val publicKey = keyPair.public
+        val privateKey = keyPair.private
+
+        return MyByteKeyPair(
+            public = publicKey.encoded,
+            private = privateKey.encoded
+        )
+    }
+
+    fun fromStore(keyPair: MyByteKeyPair): MyKeyPair {
+        val publicKey = keyPair.public
+        val privateKey = keyPair.private
+
+        val keyFactory = KeyFactory.getInstance("RSA")
+
+        val publicKeyObj = keyFactory.generatePublic(X509EncodedKeySpec(publicKey))
+        val privateKeyObj = keyFactory.generatePrivate(PKCS8EncodedKeySpec(privateKey))
+
+        return MyKeyPair(
+            publicKeyObj,
+            privateKeyObj
+        )
+    }
+
     fun encode(bytes: ByteArray) = Base64.encodeToString(bytes, Base64.DEFAULT).trim()
 
     fun encode(secretKey: SecretKey) = encode(secretKey.encoded)
+
+    fun encode(key: Key) = encode(key.encoded)
 
     fun encode(publicKey: PublicKey) = encode(publicKey.encoded)
 
