@@ -2,7 +2,9 @@ package bassamalim.ser.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,7 +21,6 @@ import bassamalim.ser.ui.theme.AppTheme
 @Composable
 fun MyDialog(
     shown: Boolean,
-    intrinsicHeight: Boolean = true,
     easyDismiss: Boolean = true,
     onDismiss: () -> Unit = {},
     content: @Composable () -> Unit
@@ -35,28 +36,14 @@ fun MyDialog(
             Surface(
                 color = Color.Transparent
             ) {
-                if (intrinsicHeight) {
-                    Box(
-                        Modifier
-                            .height(IntrinsicSize.Max)
-                            .background(
-                                shape = RoundedCornerShape(16.dp),
-                                color = AppTheme.colors.background
-                            )
-                    ) {
-                        content()
-                    }
-                }
-                else {
-                    Box(
-                        Modifier
-                            .background(
-                                shape = RoundedCornerShape(16.dp),
-                                color = AppTheme.colors.background
-                            )
-                    ) {
-                        content()
-                    }
+                Box(
+                    Modifier
+                        .background(
+                            shape = RoundedCornerShape(16.dp),
+                            color = AppTheme.colors.background
+                        )
+                ) {
+                    content()
                 }
             }
         }

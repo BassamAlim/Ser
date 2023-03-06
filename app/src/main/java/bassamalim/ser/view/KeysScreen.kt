@@ -3,8 +3,11 @@ package bassamalim.ser.view
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
@@ -154,38 +157,49 @@ fun AESKeyAddDialog(
         MyColumn(
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
         ) {
-            DialogTitle(textResId = R.string.new_key)
-
-            MyOutlinedTextField(
-                hint = stringResource(R.string.key_name),
-                onValueChange = {
-                    name = it
-                    onNameChange(it)
-                },
-                modifier = Modifier.padding(vertical = 10.dp)
+            DialogTitle(
+                textResId = R.string.new_key,
+                modifier = Modifier.padding(bottom = 6.dp)
             )
 
-            if (nameExists) {
-                MyText(
-                    text = stringResource(R.string.key_name_exists),
-                    textColor = bassamalim.ser.ui.theme.Negative
+            MyColumn(
+                modifier = Modifier
+                    .height(260.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                MyOutlinedTextField(
+                    hint = stringResource(R.string.key_name),
+                    onValueChange = {
+                        name = it
+                        onNameChange(it)
+                    },
+                    modifier = Modifier.padding(vertical = 6.dp)
                 )
+
+                if (nameExists) {
+                    MyText(
+                        text = stringResource(R.string.key_name_exists),
+                        textColor = bassamalim.ser.ui.theme.Negative
+                    )
+                }
+
+                MyOutlinedTextField(
+                    hint = stringResource(R.string.key_value),
+                    modifier = Modifier.padding(vertical = 6.dp),
+                    onValueChange = { value = it }
+                )
+
+                if (valueInvalid) {
+                    MyText(
+                        text = stringResource(R.string.key_value_invalid),
+                        textColor = bassamalim.ser.ui.theme.Negative
+                    )
+                }
             }
 
-            MyOutlinedTextField(
-                hint = stringResource(R.string.key_value),
-                modifier = Modifier.padding(vertical = 10.dp),
-                onValueChange = { value = it }
-            )
-
-            if (valueInvalid) {
-                MyText(
-                    text = stringResource(R.string.key_value_invalid),
-                    textColor = bassamalim.ser.ui.theme.Negative
-                )
-            }
-
-            MyRow {
+            MyRow(
+                modifier = Modifier.padding(top = 6.dp)
+            ) {
                 SecondaryPillBtn(
                     text = stringResource(R.string.cancel),
                     modifier = Modifier
@@ -205,6 +219,7 @@ fun AESKeyAddDialog(
         }
     }
 }
+
 
 @Composable
 fun RSAKeyAddDialog(
@@ -226,44 +241,55 @@ fun RSAKeyAddDialog(
         MyColumn(
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
         ) {
-            DialogTitle(textResId = R.string.new_keypair)
-
-            MyOutlinedTextField(
-                hint = stringResource(R.string.keypair_name),
-                onValueChange = {
-                    name = it
-                    onNameChange(it)
-                },
-                modifier = Modifier.padding(vertical = 10.dp)
+            DialogTitle(
+                textResId = R.string.new_keypair,
+                modifier = Modifier.padding(bottom = 6.dp)
             )
 
-            if (nameExists) {
-                MyText(
-                    text = stringResource(R.string.key_name_exists),
-                    textColor = bassamalim.ser.ui.theme.Negative
+            MyColumn(
+                modifier = Modifier
+                    .height(350.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                MyOutlinedTextField(
+                    hint = stringResource(R.string.keypair_name),
+                    onValueChange = {
+                        name = it
+                        onNameChange(it)
+                    },
+                    modifier = Modifier.padding(vertical = 6.dp)
                 )
+
+                if (nameExists) {
+                    MyText(
+                        text = stringResource(R.string.key_name_exists),
+                        textColor = bassamalim.ser.ui.theme.Negative
+                    )
+                }
+
+                MyOutlinedTextField(
+                    hint = stringResource(R.string.public_key),
+                    onValueChange = { public = it },
+                    modifier = Modifier.padding(vertical = 6.dp)
+                )
+
+                MyOutlinedTextField(
+                    hint = stringResource(R.string.private_key),
+                    onValueChange = { private = it },
+                    modifier = Modifier.padding(vertical = 6.dp)
+                )
+
+                if (valueInvalid) {
+                    MyText(
+                        text = stringResource(R.string.key_value_invalid),
+                        textColor = bassamalim.ser.ui.theme.Negative
+                    )
+                }
             }
 
-            MyOutlinedTextField(
-                hint = stringResource(R.string.public_key),
-                onValueChange = { public = it },
-                modifier = Modifier.padding(vertical = 10.dp)
-            )
-
-            MyOutlinedTextField(
-                hint = stringResource(R.string.private_key),
-                onValueChange = { private = it },
-                modifier = Modifier.padding(vertical = 10.dp)
-            )
-
-            if (valueInvalid) {
-                MyText(
-                    text = stringResource(R.string.key_value_invalid),
-                    textColor = bassamalim.ser.ui.theme.Negative
-                )
-            }
-
-            MyRow {
+            MyRow(
+                modifier = Modifier.padding(top = 6.dp)
+            ) {
                 SecondaryPillBtn(
                     text = stringResource(R.string.cancel),
                     modifier = Modifier

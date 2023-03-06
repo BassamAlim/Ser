@@ -1,6 +1,7 @@
 package bassamalim.ser.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -8,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import bassamalim.ser.ui.theme.AppTheme
 
@@ -21,15 +21,16 @@ fun MyTopBar(
 ) {
     TopAppBar(
         backgroundColor = backgroundColor,
-        elevation = 8.dp,
-        modifier = Modifier.fillMaxWidth()
+        elevation = 8.dp
     ) {
         Box {
-            MyBackBtn(onBack)
+            MyBackBtn(
+                modifier = Modifier.align(Alignment.CenterStart),
+                onClick = onBack
+            )
 
-            Row(
-                Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically
+            MyRow(
+                modifier = Modifier.align(Alignment.Center)
             ) {
                 ProvideTextStyle(value = MaterialTheme.typography.h6) {
                     CompositionLocalProvider(
@@ -37,10 +38,9 @@ fun MyTopBar(
                     ) {
                         MyText(
                             text = title,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold,
-                            textColor = contentColor
+                            textColor = contentColor,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }

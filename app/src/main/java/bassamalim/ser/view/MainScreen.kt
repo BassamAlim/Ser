@@ -2,12 +2,14 @@ package bassamalim.ser.view
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,30 +34,7 @@ fun MainUI(
 
     MyScaffold(
         title = stringResource(R.string.app_name),
-        topBar = {
-            TopAppBar(
-                backgroundColor = AppTheme.colors.primary,
-                elevation = 8.dp,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    Modifier.fillMaxSize()
-                ) {
-                    Row(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        MyText(
-                            stringResource(R.string.app_name),
-                            textColor = AppTheme.colors.onPrimary
-                        )
-                    }
-                }
-            }
-        },
+        topBar = { TopBar() },
         bottomBar = { MyBottomNavigation(bottomNc) }
     ) {
         NavigationGraph(nc, bottomNc, it)
@@ -134,6 +113,35 @@ fun NavigationGraph(
         ) {
             RSAUI(
                 vm = hiltViewModel()
+            )
+        }
+    }
+}
+
+@Composable
+fun TopBar() {
+    TopAppBar(
+        backgroundColor = AppTheme.colors.primary,
+        elevation = 8.dp
+    ) {
+        Box(
+            Modifier.fillMaxSize()
+        ) {
+            MyText(
+                stringResource(R.string.app_name),
+                textColor = AppTheme.colors.onPrimary,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(start = 14.dp)
+            )
+
+            Icon(
+                painter = painterResource(R.drawable.foreground_icon),
+                contentDescription = "Logo",
+                tint = AppTheme.colors.accent,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(14.dp)
             )
         }
     }

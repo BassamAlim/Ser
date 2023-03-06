@@ -71,6 +71,7 @@ fun MyColumn(
 
 @Composable
 fun MyRow(
+    modifier: Modifier = Modifier,
     alignment: Alignment.Vertical = Alignment.CenterVertically,
     arrangement: Arrangement.Horizontal = Arrangement.SpaceEvenly,
     padding: PaddingValues = PaddingValues(horizontal = 10.dp),
@@ -79,7 +80,7 @@ fun MyRow(
     Row(
         verticalAlignment = alignment,
         horizontalArrangement = arrangement,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(padding)
     ) {

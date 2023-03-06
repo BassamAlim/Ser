@@ -4,8 +4,11 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -13,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
@@ -211,7 +215,7 @@ fun RSAKeyCard(
                             textColor = AppTheme.colors.strongText,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
+                                .padding(top = 10.dp, start = 16.dp)
                         )
 
                         CopyBtn(onClick = onCopyPublicKey)
@@ -220,11 +224,16 @@ fun RSAKeyCard(
                     SelectionContainer(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(100.dp)
                             .padding(all = 10.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .verticalScroll(rememberScrollState())
+                            .background(AppTheme.colors.surface)
                     ) {
                         MyText(
                             publicKey,
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
                         )
                     }
 
@@ -238,7 +247,7 @@ fun RSAKeyCard(
                             textColor = AppTheme.colors.strongText,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
+                                .padding(top = 10.dp, start = 16.dp)
                         )
 
                         CopyBtn(onClick = onCopyPrivateKey)
@@ -247,11 +256,16 @@ fun RSAKeyCard(
                     SelectionContainer(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(100.dp)
                             .padding(all = 10.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .verticalScroll(rememberScrollState())
+                            .background(AppTheme.colors.surface)
                     ) {
                         MyText(
                             privateKey,
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
                         )
                     }
                 }

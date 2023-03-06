@@ -46,9 +46,7 @@ class KeysVM @Inject constructor(
         _uiState.update { it.copy(
             aesKeyAddDialogShown = false,
             invalidAESKey = false,
-            invalidRSAKey = false,
             aesNameAlreadyExists = false,
-            rsaNameAlreadyExists = false
         )}
     }
 
@@ -58,8 +56,7 @@ class KeysVM @Inject constructor(
         try {
             val bytes = Utils.decode(value)
 
-            val valid = bytes.size == 16 || bytes.size == 24 || bytes.size == 32
-            if (!valid) throw java.lang.IllegalArgumentException()
+            if (bytes.size != 16) throw java.lang.IllegalArgumentException()
 
             repo.insertAESKey(name, value)
 
@@ -76,6 +73,7 @@ class KeysVM @Inject constructor(
         }
     }
 
+
     fun onAddRSAKey() {
         _uiState.update { it.copy(
             rsaKeyAddDialogShown = true
@@ -90,21 +88,38 @@ class KeysVM @Inject constructor(
 
     fun onRSAKeyAddDialogCancel() {
         _uiState.update { it.copy(
-            rsaKeyAddDialogShown = false
+            rsaKeyAddDialogShown = false,
+            rsaNameAlreadyExists = false,
+            invalidRSAKey = false
         )}
     }
 
     fun onRSAKeyAddDialogSubmit(name: String, public: String, private: String) {
         if (_uiState.value.rsaNameAlreadyExists) return
 
-        rsaKeyNames = repo.getRSAKeyNames()
+        try {
+            val publicBytes = Utils.decode(public)
+            println(publicBytes.size)
+            if (publicBytes.size != 62) throw java.lang.IllegalArgumentException()
 
-        _uiState.update { it.copy(
-            rsaKeys = repo.getRSAKeys(),
-            rsaKeyAddDialogShown = false
-        )}
+            val privateBytes = Utils.decode(private)
+            println(privateBytes.size)
+            if (privateBytes.size < 196 || privateBytes.size > 198)
+                throw java.lang.IllegalArgumentException()
 
-        repo.insertRSAKey(name, public, private)
+            repo.insertRSAKey(name, public, private)
+
+            _uiState.update { it.copy(
+                rsaKeys = repo.getRSAKeys(),
+                rsaKeyAddDialogShown = false
+            )}
+            rsaKeyNames = repo.getRSAKeyNames()
+
+        } catch (e: java.lang.IllegalArgumentException) {
+            _uiState.update { it.copy(
+                invalidRSAKey = true
+            )}
+        }
     }
 
     fun onAESKeyClk(idx: Int) {
@@ -118,7 +133,6 @@ class KeysVM @Inject constructor(
             label = "AES Key"
         )
     }
-
 
     fun onRSAKeyClk(idx: Int) {
 

@@ -148,11 +148,10 @@ fun KeyPickerDialog(
 ) {
     MyDialog(
         shown = shown,
-        intrinsicHeight = false,  // because of the lazy column
         onDismiss = onCancel
     ) {
         MyColumn(
-            modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+            Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
         ) {
             DialogTitle(textResId = R.string.pick_key)
 

@@ -236,11 +236,14 @@ fun MyIconBtn(
 }
 
 @Composable
-fun MyBackBtn(onClick: (() -> Unit)? = null) {
+fun MyBackBtn(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
+) {
     val context = LocalContext.current
 
     Row(
-        Modifier
+        modifier
             .fillMaxHeight()
             .width(72.dp - 4.dp),
         verticalAlignment = Alignment.CenterVertically
