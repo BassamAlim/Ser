@@ -73,7 +73,7 @@ fun MyFormField(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Close,
-                        contentDescription = null,
+                        contentDescription = "Clear",
                         tint = AppTheme.colors.text
                     )
                 }
@@ -88,6 +88,7 @@ fun MySuggestiveFormField(
     title: String,
     suggestions: List<String>,
     modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
     fillFraction: Float = 0.85f,
     onSuggestionChosen: (String) -> Unit = {},
     onValueChange: (String) -> Unit = {}
@@ -104,6 +105,7 @@ fun MySuggestiveFormField(
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 },
+            isEnabled = isEnabled,
             fillFraction = fillFraction
         ) {
             onValueChange(it)
@@ -150,12 +152,14 @@ fun MyOutlinedTextField(
     hint: String,
     modifier: Modifier = Modifier,
     fontSize : TextUnit = 18.sp,
+    isEnabled: Boolean = true,
     onValueChange: (String) -> Unit = {}
 ) {
     var textState by remember { mutableStateOf("") }
 
     OutlinedTextField(
         value = textState,
+        modifier = modifier.padding(vertical = 10.dp),
         textStyle = TextStyle(
             fontSize = fontSize
         ),
@@ -174,6 +178,21 @@ fun MyOutlinedTextField(
             disabledLabelColor = AppTheme.colors.weakText,
             cursorColor = AppTheme.colors.accent
         ),
-        modifier = modifier.padding(vertical = 10.dp)
+        trailingIcon = {
+            if (textState.isNotEmpty() && isEnabled) {
+                IconButton(
+                    onClick = {
+                        textState = ""
+                        onValueChange("")
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Close,
+                        contentDescription = "Clear",
+                        tint = AppTheme.colors.text
+                    )
+                }
+            }
+        }
     )
 }

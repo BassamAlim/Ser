@@ -5,7 +5,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
 import bassamalim.ser.enums.Operation
+import bassamalim.ser.models.RSAKeyPair
 import bassamalim.ser.ui.components.*
 import bassamalim.ser.ui.theme.AppTheme
 import bassamalim.ser.viewmodel.RSAVM
@@ -48,15 +48,11 @@ fun RSAUI(
             .verticalScroll(scrollState)
     ) {
         RSAKeyCard(
-            keyAvailable = st.keyAvailable,
-            keySaved = st.keySaved,
-            publicKey = st.publicKey,
-            privateKey = st.privateKey,
+            keyPair = st.keyPair,
             onCopyPublicKey = vm::onCopyPublicKey,
             onCopyPrivateKey = vm::onCopyPrivateKey,
-            onSaveKey = vm::onSaveKey,
             onSelectKey = vm::onSelectKey,
-            onGenerateKey = vm::onGenerateKey,
+            onNewKey = vm::onNewKey,
             onImportKey = vm::onImportKey,
         )
 
@@ -132,27 +128,23 @@ fun RSAUI(
         )
 
         SaveKeyDialog(
-            st.saveDialogShown,
+            st.newKeyDialogShown,
             st.nameAlreadyExists,
-            onTextChange = { vm.onSaveDialogNameChange(it) },
-            onSubmit = { vm.onSaveDialogSubmit(it) },
-            onCancel = vm::onSaveDialogCancel
+            onTextChange = { vm.onNewKeyDlgNameCh(it) },
+            onSubmit = { vm.onSaveDlgSubmit(it) },
+            onCancel = vm::onNewKeyDlgCancel
         )
     }
 }
 
 @Composable
 fun RSAKeyCard(
-    keyAvailable: Boolean,
-    keySaved: Boolean,
-    publicKey: String,
-    privateKey: String,
+    keyPair: RSAKeyPair,
     modifier: Modifier = Modifier,
     onCopyPublicKey: () -> Unit,
     onCopyPrivateKey: () -> Unit,
-    onSaveKey: () -> Unit,
     onSelectKey: () -> Unit,
-    onGenerateKey: () -> Unit,
+    onNewKey: () -> Unit,
     onImportKey: () -> Unit
 ) {
     var expandedState by remember { mutableStateOf(false) }
@@ -175,10 +167,7 @@ fun RSAKeyCard(
                 padding = PaddingValues(start = 6.dp, end = 12.dp)
             ) {
                 MyText(
-                    text = stringResource(
-                        if (keyAvailable) R.string.key_pair
-                        else R.string.no_keypair_available
-                    ),
+                    text = "${stringResource(R.string.key_pair)}: ${keyPair.name}",
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
                     textColor = AppTheme.colors.strongText,
@@ -186,8 +175,6 @@ fun RSAKeyCard(
                         .weight(1f)
                         .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
                 )
-
-                if (!keySaved) SaveBtn(onClick = onSaveKey)
 
                 Box(
                     modifier = Modifier.padding(start = 20.dp)
@@ -204,96 +191,85 @@ fun RSAKeyCard(
             }
 
             if (expandedState) {
-                if (keyAvailable) {
-                    MyRow(
-                        padding = PaddingValues(start = 6.dp, end = 12.dp)
-                    ) {
-                        MyText(
-                            text = stringResource(R.string.public_key),
-                            fontSize = 22.sp,
-                            textAlign = TextAlign.Start,
-                            textColor = AppTheme.colors.strongText,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(top = 10.dp, start = 16.dp)
-                        )
-
-                        CopyBtn(onClick = onCopyPublicKey)
-                    }
-
-                    SelectionContainer(
+                MyRow(
+                    padding = PaddingValues(start = 6.dp, end = 12.dp)
+                ) {
+                    MyText(
+                        text = stringResource(R.string.public_key),
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Start,
+                        textColor = AppTheme.colors.strongText,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                            .padding(all = 10.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .verticalScroll(rememberScrollState())
-                            .background(AppTheme.colors.surface)
-                    ) {
-                        MyText(
-                            publicKey,
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
-                        )
-                    }
+                            .weight(1f)
+                            .padding(top = 10.dp, start = 16.dp)
+                    )
 
-                    MyRow(
-                        padding = PaddingValues(start = 6.dp, end = 12.dp)
-                    ) {
-                        MyText(
-                            text = stringResource(R.string.private_key),
-                            fontSize = 22.sp,
-                            textAlign = TextAlign.Start,
-                            textColor = AppTheme.colors.strongText,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(top = 10.dp, start = 16.dp)
-                        )
+                    CopyBtn(onClick = onCopyPublicKey)
+                }
 
-                        CopyBtn(onClick = onCopyPrivateKey)
-                    }
+                SelectionContainer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .padding(all = 10.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .verticalScroll(rememberScrollState())
+                        .background(AppTheme.colors.surface)
+                ) {
+                    MyText(
+                        keyPair.public,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
+                    )
+                }
 
-                    SelectionContainer(
+                MyRow(
+                    padding = PaddingValues(start = 6.dp, end = 12.dp)
+                ) {
+                    MyText(
+                        text = stringResource(R.string.private_key),
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Start,
+                        textColor = AppTheme.colors.strongText,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                            .padding(all = 10.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .verticalScroll(rememberScrollState())
-                            .background(AppTheme.colors.surface)
-                    ) {
-                        MyText(
-                            privateKey,
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
-                        )
-                    }
+                            .weight(1f)
+                            .padding(top = 10.dp, start = 16.dp)
+                    )
+
+                    CopyBtn(onClick = onCopyPrivateKey)
+                }
+
+                SelectionContainer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .padding(all = 10.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .verticalScroll(rememberScrollState())
+                        .background(AppTheme.colors.surface)
+                ) {
+                    MyText(
+                        keyPair.private,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
+                    )
                 }
 
                 SecondaryPillBtn(
                     text = stringResource(R.string.select_keypair),
-                    textColor =
-                        if (keyAvailable) AppTheme.colors.text
-                        else AppTheme.colors.accent,
+                    textColor = AppTheme.colors.text,
                     onClick = onSelectKey
                 )
 
                 SecondaryPillBtn(
-                    text = stringResource(
-                        if (keyAvailable) R.string.generate_new_keypair
-                        else R.string.generate_keypair
-                    ),
-                    textColor =
-                        if (keyAvailable) AppTheme.colors.text
-                        else AppTheme.colors.accent,
-                    onClick = onGenerateKey
+                    text = stringResource( R.string.generate_new_keypair),
+                    textColor = AppTheme.colors.text,
+                    onClick = onNewKey
                 )
 
                 SecondaryPillBtn(
                     text = stringResource(R.string.import_keypair),
-                    textColor =
-                        if (keyAvailable) AppTheme.colors.text
-                        else AppTheme.colors.accent,
+                    textColor = AppTheme.colors.text,
                     modifier = Modifier.padding(bottom = 10.dp),
                     onClick = onImportKey
                 )

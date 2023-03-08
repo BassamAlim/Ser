@@ -2,8 +2,10 @@ package bassamalim.ser.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import bassamalim.ser.data.Prefs
 import bassamalim.ser.enums.Operation
 import bassamalim.ser.helpers.Cryptography
+import bassamalim.ser.models.RSAKeyPair
 import bassamalim.ser.repository.RSARepo
 import bassamalim.ser.state.RSAState
 import bassamalim.ser.utils.Utils
@@ -20,28 +22,23 @@ class RSAVM @Inject constructor(
 ): AndroidViewModel(app) {
 
     private var text = ""
-    private var keyPair = repo.getTempKey()
+    private var keyPair = repo.getKey(Prefs.SelectedRSAKey.default as String)
     var keyNames = repo.getKeyNames()
         private set
 
     private val _uiState = MutableStateFlow(RSAState(
-        keyAvailable = keyPair != null
+        keyPair = RSAKeyPair(
+            name = Prefs.SelectedRSAKey.default as String,
+            public = Utils.encode(keyPair.public),
+            private = Utils.encode(keyPair.private)
+        )
     ))
     val uiState = _uiState.asStateFlow()
-
-    init {
-        if (keyPair != null) {
-            _uiState.update { it.copy(
-                publicKey = Utils.encode(keyPair!!.public),
-                privateKey = Utils.encode(keyPair!!.private)
-            )}
-        }
-    }
 
     fun onCopyPublicKey() {
         Utils.copyToClipboard(
             app = app,
-            text = uiState.value.publicKey,
+            text = uiState.value.keyPair.public,
             label = "RSA Public Key"
         )
     }
@@ -49,45 +46,31 @@ class RSAVM @Inject constructor(
     fun onCopyPrivateKey() {
         Utils.copyToClipboard(
             app = app,
-            text = uiState.value.privateKey,
+            text = uiState.value.keyPair.private,
             label = "RSA Private Key"
         )
-    }
-
-    fun onSaveKey() {
-        _uiState.update { it.copy(
-            saveDialogShown = true
-        )}
-    }
-
-    fun onSaveDialogNameChange(name: String) {
-        _uiState.update { it.copy(
-            nameAlreadyExists = keyNames.any { n -> n == name }
-        )}
-    }
-
-    fun onSaveDialogSubmit(name: String) {
-        if (uiState.value.nameAlreadyExists) return
-
-        _uiState.update { it.copy(
-            saveDialogShown = false
-        )}
-
-        repo.storeKey(name, keyPair!!)
-
-        keyNames = repo.getKeyNames()
-    }
-
-    fun onSaveDialogCancel() {
-        _uiState.update { it.copy(
-            saveDialogShown = false,
-            nameAlreadyExists = false
-        )}
     }
 
     fun onSelectKey() {
         _uiState.update { it.copy(
             keyPickerShown = true
+        )}
+    }
+
+    fun onKeySelected(idx: Int) {
+        val name = keyNames[idx]
+
+        repo.setSelectedKey(name)
+
+        keyPair = repo.getKey(name)
+
+        _uiState.update { it.copy(
+            keyPair = RSAKeyPair(
+                name = name,
+                public = Utils.encode(keyPair.public),
+                private = Utils.encode(keyPair.private)
+            ),
+            keyPickerShown = false
         )}
     }
 
@@ -97,33 +80,48 @@ class RSAVM @Inject constructor(
         )}
     }
 
-    fun onKeySelected(idx: Int) {
-        keyPair = repo.getKey(keyNames[idx])
-
-        repo.storeTempKey(keyPair!!)
-
+    fun onNewKey() {
         _uiState.update { it.copy(
-            keyAvailable = true,
-            publicKey = Utils.encode(keyPair!!.public),
-            privateKey = Utils.encode(keyPair!!.private),
-            keyPickerShown = false
+            newKeyDialogShown = true
         )}
     }
 
-    fun onGenerateKey() {
+    fun onNewKeyDlgNameCh(name: String) {
+        _uiState.update { it.copy(
+            nameAlreadyExists = keyNames.any { n -> n == name }
+        )}
+    }
+
+    fun onSaveDlgSubmit(name: String) {
+        if (uiState.value.nameAlreadyExists) return
+
         keyPair = Cryptography.generateRSAKey()
 
-        repo.storeTempKey(keyPair!!)
+        repo.storeKey(name, keyPair)
+
+        repo.setSelectedKey(name)
 
         _uiState.update { it.copy(
-            keyAvailable = true,
-            publicKey = Utils.encode(keyPair!!.public),
-            privateKey = Utils.encode(keyPair!!.private),
+            newKeyDialogShown = false,
+            keyPair = RSAKeyPair(
+                name = name,
+                public = Utils.encode(keyPair.public),
+                private = Utils.encode(keyPair.private)
+            )
+        )}
+
+        keyNames = repo.getKeyNames()
+    }
+
+    fun onNewKeyDlgCancel() {
+        _uiState.update { it.copy(
+            newKeyDialogShown = false,
+            nameAlreadyExists = false
         )}
     }
 
     fun onImportKey() {
-
+        // TODO
     }
 
     fun onOpSwitch(isDecrypt: Boolean) {
@@ -139,13 +137,13 @@ class RSAVM @Inject constructor(
     }
 
     fun onExecute() {
-        if (text.isEmpty() || keyPair == null) return
+        if (text.isEmpty()) return
 
         val result =
             if (uiState.value.operation == Operation.ENCRYPT)
-                Cryptography.encryptRSA(text, keyPair!!.public)
+                Cryptography.encryptRSA(text, keyPair.public)
             else
-                Cryptography.decryptRSA(text, keyPair!!.private)
+                Cryptography.decryptRSA(text, keyPair.private)
 
         _uiState.update { it.copy(
             result = result?.trim() ?: "Failed to ${uiState.value.operation.name.lowercase()}"

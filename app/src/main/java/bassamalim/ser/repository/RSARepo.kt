@@ -1,31 +1,33 @@
 package bassamalim.ser.repository
 
+import android.content.SharedPreferences
+import bassamalim.ser.data.Prefs
 import bassamalim.ser.data.database.AppDatabase
-import bassamalim.ser.helpers.TempKeyKeeper
-import bassamalim.ser.models.MyByteKeyPair
+import bassamalim.ser.enums.Algorithm
+import bassamalim.ser.helpers.KeyKeeper
 import bassamalim.ser.models.MyKeyPair
-import bassamalim.ser.utils.Utils
 import com.google.gson.Gson
 import javax.inject.Inject
 
 class RSARepo @Inject constructor(
+    private val sp: SharedPreferences,
     private val db: AppDatabase,
-    private val gson: Gson,
-    private val tempKeyKeeper: TempKeyKeeper
+    gson: Gson
 ) {
 
-    fun storeTempKey(key: MyKeyPair) = tempKeyKeeper.storeRSAKey(key)
-    fun getTempKey() = tempKeyKeeper.getRSAKey()
+    private val keyKeeper = KeyKeeper(db, gson, Algorithm.RSA)
 
     fun storeKey(name: String, keyPair: MyKeyPair) {
-        val byteKeyPair = Utils.toStore(keyPair)
-        val keyJson = gson.toJson(byteKeyPair)
-        db.rsaDao().insert(name, keyJson)
+        keyKeeper.store(name, keyPair)
     }
     fun getKey(name: String): MyKeyPair {
-        val keyJson = db.rsaDao().getKey(name)
-        val byteKeyPair = gson.fromJson(keyJson, MyByteKeyPair::class.java)
-        return Utils.fromStore(byteKeyPair)
+        return keyKeeper.get(name) as MyKeyPair
+    }
+
+    fun setSelectedKey(name: String) {
+        sp.edit()
+            .putString(Prefs.SelectedRSAKey.key, name)
+            .apply()
     }
 
     fun getKeyNames() = db.rsaDao().getNames()

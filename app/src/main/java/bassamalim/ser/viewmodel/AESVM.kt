@@ -2,8 +2,10 @@ package bassamalim.ser.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import bassamalim.ser.data.Prefs
 import bassamalim.ser.enums.Operation
 import bassamalim.ser.helpers.Cryptography
+import bassamalim.ser.models.AESKey
 import bassamalim.ser.repository.AESRepo
 import bassamalim.ser.state.AESState
 import bassamalim.ser.utils.Utils
@@ -20,59 +22,24 @@ class AESVM @Inject constructor(
 ): AndroidViewModel(app) {
 
     private var text = ""
-    private var key = repo.getTempKey()
+    private var key = repo.getKey(Prefs.SelectedAESKey.default as String)
     var keyNames = repo.getKeyNames()
         private set
 
     private val _uiState = MutableStateFlow(AESState(
-        keyAvailable = key != null
+        key = AESKey(
+            name = Prefs.SelectedAESKey.default as String,
+            value = Utils.encode(key)
+        )
     ))
     val uiState = _uiState.asStateFlow()
-
-    init {
-        if (key != null) {
-            _uiState.update { it.copy(
-                key = Utils.encode(key!!)
-            )}
-        }
-    }
 
     fun onCopyKey() {
         Utils.copyToClipboard(
             app = app,
-            text = uiState.value.key,
+            text = uiState.value.key.value,
             label = "AES Key"
         )
-    }
-
-    fun onSaveKey() {
-        _uiState.update { it.copy(
-            saveDialogShown = true
-        )}
-    }
-
-    fun onSaveDialogNameChange(name: String) {
-        _uiState.update { it.copy(
-            nameAlreadyExists = keyNames.any { n -> n == name }
-        )}
-    }
-
-    fun onSaveDialogSubmit(name: String) {
-        if (uiState.value.nameAlreadyExists) return
-
-        _uiState.update { it.copy(
-            saveDialogShown = false
-        )}
-
-        repo.storeKey(name, key!!)
-
-        keyNames = repo.getKeyNames()
-    }
-
-    fun onSaveDialogCancel() {
-        _uiState.update { it.copy(
-            saveDialogShown = false
-        )}
     }
 
     fun onSelectKey() {
@@ -81,38 +48,69 @@ class AESVM @Inject constructor(
         )}
     }
 
-    fun onKeyPickerCancel() {
+    fun onKeySelected(idx: Int) {
+        val name = keyNames[idx]
+
+        key = repo.getKey(name)
+
         _uiState.update { it.copy(
-            keyPickerShown = false,
-            nameAlreadyExists = false
+            key = AESKey(
+                name = name,
+                value = Utils.encode(key)
+            ),
+            keyPickerShown = false
         )}
+
+        repo.setSelectedKey(name)
     }
 
-    fun onKeySelected(idx: Int) {
-        key = repo.getKey(keyNames[idx])
-
-        repo.storeTempKey(key!!)
-
+    fun onKeyPickerCancel() {
         _uiState.update { it.copy(
-            keyAvailable = true,
-            key = Utils.encode(key!!),
             keyPickerShown = false
         )}
     }
 
-    fun onGenerateKey() {
+    fun onNewKey() {
+        _uiState.update { it.copy(
+            newKeyDialogShown = true
+        )}
+    }
+
+    fun onNewKeyDlgNameCh(name: String) {
+        _uiState.update { it.copy(
+            nameAlreadyExists = keyNames.any { n -> n == name }
+        )}
+    }
+
+    fun onNewKeyDlgSubmit(name: String) {
+        if (uiState.value.nameAlreadyExists) return
+
         key = Cryptography.generateAESKey()
 
-        repo.storeTempKey(key!!)
+        repo.storeKey(name, key)
 
         _uiState.update { it.copy(
-            keyAvailable = true,
-            key = Utils.encode(key!!)
+            newKeyDialogShown = false,
+            key = AESKey(
+                name = name,
+                value = Utils.encode(key)
+            )
+        )}
+
+        repo.setSelectedKey(name)
+
+        keyNames = repo.getKeyNames()
+    }
+
+    fun onNewKeyDlgCancel() {
+        _uiState.update { it.copy(
+            newKeyDialogShown = false,
+            nameAlreadyExists = false
         )}
     }
 
     fun onImportKey() {
-
+        // TODO
     }
 
     fun onOpSwitch(isDecrypt: Boolean) {
@@ -128,11 +126,11 @@ class AESVM @Inject constructor(
     }
 
     fun onExecute() {
-        if (text.isEmpty() || key == null) return
+        if (text.isEmpty()) return
 
         val result =
-            if (uiState.value.operation == Operation.ENCRYPT) Cryptography.encryptAES(text, key!!)
-            else Cryptography.decryptAES(text, key!!)
+            if (uiState.value.operation == Operation.ENCRYPT) Cryptography.encryptAES(text, key)
+            else Cryptography.decryptAES(text, key)
 
         _uiState.update { it.copy(
             result = result?.trim() ?: "Failed to ${uiState.value.operation.name.lowercase()}"

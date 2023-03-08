@@ -129,7 +129,7 @@ class KeysVM @Inject constructor(
     fun onAESKeyCopy(idx: Int) {
         Utils.copyToClipboard(
             app = app,
-            text = _uiState.value.aesKeys[idx].key,
+            text = _uiState.value.aesKeys[idx].value,
             label = "AES Key"
         )
     }

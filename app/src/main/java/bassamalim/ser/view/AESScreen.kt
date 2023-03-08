@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
 import bassamalim.ser.enums.Operation
+import bassamalim.ser.models.AESKey
 import bassamalim.ser.ui.components.*
 import bassamalim.ser.ui.theme.AppTheme
 import bassamalim.ser.viewmodel.AESVM
@@ -45,13 +46,10 @@ fun AESUI(
             .verticalScroll(scrollState)
     ) {
         AESKeyCard(
-            keyAvailable = st.keyAvailable,
-            keySaved = st.keySaved,
             key = st.key,
             onCopyKey = vm::onCopyKey,
-            onSaveKey = vm::onSaveKey,
             onSelectKey = vm::onSelectKey,
-            onGenerateKey = vm::onGenerateKey,
+            onNewKey = vm::onNewKey,
             onImportKey = vm::onImportKey,
         )
 
@@ -126,25 +124,22 @@ fun AESUI(
         )
 
         SaveKeyDialog(
-            st.saveDialogShown,
+            st.newKeyDialogShown,
             st.nameAlreadyExists,
-            onTextChange = { vm.onSaveDialogNameChange(it) },
-            onSubmit = { vm.onSaveDialogSubmit(it) },
-            onCancel = vm::onSaveDialogCancel
+            onTextChange = { vm.onNewKeyDlgNameCh(it) },
+            onSubmit = { vm.onNewKeyDlgSubmit(it) },
+            onCancel = vm::onNewKeyDlgCancel
         )
     }
 }
 
 @Composable
 fun AESKeyCard(
-    keyAvailable: Boolean,
-    keySaved: Boolean,
-    key: String,
+    key: AESKey,
     modifier: Modifier = Modifier,
     onCopyKey: () -> Unit,
-    onSaveKey: () -> Unit,
     onSelectKey: () -> Unit,
-    onGenerateKey: () -> Unit,
+    onNewKey: () -> Unit,
     onImportKey: () -> Unit
 ) {
     var expandedState by remember { mutableStateOf(false) }
@@ -167,10 +162,7 @@ fun AESKeyCard(
                 padding = PaddingValues(start = 6.dp, end = 12.dp)
             ) {
                 MyText(
-                    text = stringResource(
-                        if (keyAvailable) R.string.key
-                        else R.string.no_key_available
-                    ),
+                    text = "${stringResource(R.string.key)}: ${key.name}",
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
                     textColor = AppTheme.colors.strongText,
@@ -182,9 +174,7 @@ fun AESKeyCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (keyAvailable) CopyBtn(onClick = onCopyKey)
-
-                    if (!keySaved) SaveBtn(onClick = onSaveKey)
+                    CopyBtn(onClick = onCopyKey)
 
                     Box(
                         modifier = Modifier.padding(start = 20.dp)
@@ -202,43 +192,32 @@ fun AESKeyCard(
             }
 
             if (expandedState) {
-                if (keyAvailable) {
-                    SelectionContainer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(all = 10.dp)
-                    ) {
-                        MyText(
-                            key,
-                            fontSize = 20.sp
-                        )
-                    }
+                SelectionContainer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 10.dp)
+                ) {
+                    MyText(
+                        key.value,
+                        fontSize = 20.sp
+                    )
                 }
 
                 SecondaryPillBtn(
                     text = stringResource(R.string.select_key),
-                    textColor =
-                    if (keyAvailable) AppTheme.colors.text
-                    else AppTheme.colors.accent,
+                    textColor = AppTheme.colors.text,
                     onClick = onSelectKey
                 )
 
                 SecondaryPillBtn(
-                    text = stringResource(
-                        if (keyAvailable) R.string.generate_new_key
-                        else R.string.generate_key
-                    ),
-                    textColor =
-                    if (keyAvailable) AppTheme.colors.text
-                    else AppTheme.colors.accent,
-                    onClick = onGenerateKey
+                    text = stringResource(R.string.generate_new_key),
+                    textColor = AppTheme.colors.text,
+                    onClick = onNewKey
                 )
 
                 SecondaryPillBtn(
                     text = stringResource(R.string.import_key),
-                    textColor =
-                    if (keyAvailable) AppTheme.colors.text
-                    else AppTheme.colors.accent,
+                    textColor = AppTheme.colors.text,
                     modifier = Modifier.padding(bottom = 10.dp),
                     onClick = onImportKey
                 )

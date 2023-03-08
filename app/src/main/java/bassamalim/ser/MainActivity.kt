@@ -8,7 +8,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
 import bassamalim.ser.data.GlobalVals
+import bassamalim.ser.data.Prefs
+import bassamalim.ser.enums.Algorithm
 import bassamalim.ser.enums.Language
+import bassamalim.ser.helpers.Cryptography
+import bassamalim.ser.helpers.KeyKeeper
 import bassamalim.ser.nav.Navigator
 import bassamalim.ser.ui.theme.AppTheme
 import bassamalim.ser.utils.ActivityUtils
@@ -16,6 +20,7 @@ import bassamalim.ser.utils.DBUtils
 import bassamalim.ser.utils.PrefUtils
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,9 +62,12 @@ class MainActivity : ComponentActivity() {
         DBUtils.testDB(this, sp)
 
 //        ActivityUtils.onActivityCreateSetLocale(this)
-        ActivityUtils.onActivityCreateSetTheme(this)
+        ActivityUtils.onActivityCreateSetTheme(this)  // a must for the app to use xml themes
 //        ActivityUtils.onActivityCreateSetLocale(applicationContext)
         ActivityUtils.onActivityCreateSetTheme(applicationContext)
+
+        val shouldWelcome = PrefUtils.getBoolean(sp, Prefs.FirstTime)
+        if (shouldWelcome) welcome()
     }
 
     private fun launch() {
@@ -77,6 +85,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun postLaunch() {
+        initFirebase()
+
+        fetchAndActivateRemoteConfig()
+
+//        setupBootReceiver()
+    }
+
     private fun getDirection(): LayoutDirection {
         val language = PrefUtils.getLanguage(sp)
 
@@ -84,12 +100,29 @@ class MainActivity : ComponentActivity() {
         else LayoutDirection.Rtl
     }
 
-    private fun postLaunch() {
-        initFirebase()
+    /**
+     * It generates an AES key and an RSA key pair, and stores them in the database
+     */
+    private fun welcome() {
+        val db = DBUtils.getDB(this)
+        val gson = Gson()
 
-        fetchAndActivateRemoteConfig()
+        // generate AES key
+        val key = Cryptography.generateAESKey()
+        // store AES key
+        val aesKeyKeeper = KeyKeeper(db, gson, Algorithm.AES)
+        aesKeyKeeper.store("Default AES key", key)
 
-//        setupBootReceiver()
+        // generate RSA key pair
+        val keyPair = Cryptography.generateRSAKey()
+        // store RSA key pair
+        val rsaKeyKeeper = KeyKeeper(db, gson, Algorithm.RSA)
+        rsaKeyKeeper.store("Default RSA key pair", keyPair)
+
+        // set first time to false
+        sp.edit()
+            .putBoolean(Prefs.FirstTime.key, false)
+            .apply()
     }
 
     private fun initFirebase() {

@@ -1,15 +1,13 @@
 package bassamalim.ser.state
 
 import bassamalim.ser.enums.Operation
+import bassamalim.ser.models.RSAKeyPair
 
 data class RSAState(
-    val keyAvailable: Boolean = false,
-    val publicKey: String = "",
-    val privateKey: String = "",
-    val keySaved: Boolean = false,
+    val keyPair: RSAKeyPair = RSAKeyPair("", "", ""),
     val operation: Operation = Operation.ENCRYPT,
     val result: String = "",
-    val saveDialogShown: Boolean = false,
+    val newKeyDialogShown: Boolean = false,
     val nameAlreadyExists: Boolean = false,
     val keyPickerShown: Boolean = false
 )
