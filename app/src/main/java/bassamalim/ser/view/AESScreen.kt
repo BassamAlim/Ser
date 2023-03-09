@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
 import bassamalim.ser.enums.Operation
-import bassamalim.ser.models.AESKey
+import bassamalim.ser.state.AESState
 import bassamalim.ser.ui.components.*
 import bassamalim.ser.ui.theme.AppTheme
 import bassamalim.ser.viewmodel.AESVM
@@ -46,7 +46,7 @@ fun AESUI(
             .verticalScroll(scrollState)
     ) {
         AESKeyCard(
-            key = st.key,
+            st = st,
             onCopyKey = vm::onCopyKey,
             onSelectKey = vm::onSelectKey,
             onNewKey = vm::onNewKey,
@@ -135,7 +135,7 @@ fun AESUI(
 
 @Composable
 fun AESKeyCard(
-    key: AESKey,
+    st: AESState,
     modifier: Modifier = Modifier,
     onCopyKey: () -> Unit,
     onSelectKey: () -> Unit,
@@ -162,7 +162,7 @@ fun AESKeyCard(
                 padding = PaddingValues(start = 6.dp, end = 12.dp)
             ) {
                 MyText(
-                    text = "${stringResource(R.string.key)}: ${key.name}",
+                    text = "${stringResource(R.string.key)}: ${st.keyName}",
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
                     textColor = AppTheme.colors.strongText,
@@ -198,7 +198,7 @@ fun AESKeyCard(
                         .padding(all = 10.dp)
                 ) {
                     MyText(
-                        key.value,
+                        st.secretKey,
                         fontSize = 20.sp
                     )
                 }

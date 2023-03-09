@@ -254,5 +254,8 @@
     <string name="key_value">Key value</string>
     <string name="key_name_exists">Key name already exists</string>
     <string name="key_value_invalid">Key value is invalid</string>
+    <string name="remove">Remove</string>
+    <string name="rename">Rename</string>
+    <string name="set_primary">Set primary</string>
 
 </resources>

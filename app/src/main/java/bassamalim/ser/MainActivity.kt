@@ -9,10 +9,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
 import bassamalim.ser.data.GlobalVals
 import bassamalim.ser.data.Prefs
-import bassamalim.ser.enums.Algorithm
 import bassamalim.ser.enums.Language
 import bassamalim.ser.helpers.Cryptography
 import bassamalim.ser.helpers.KeyKeeper
+import bassamalim.ser.models.AESKey
+import bassamalim.ser.models.RSAKeyPair
 import bassamalim.ser.nav.Navigator
 import bassamalim.ser.ui.theme.AppTheme
 import bassamalim.ser.utils.ActivityUtils
@@ -104,20 +105,24 @@ class MainActivity : ComponentActivity() {
      * It generates an AES key and an RSA key pair, and stores them in the database
      */
     private fun welcome() {
-        val db = DBUtils.getDB(this)
-        val gson = Gson()
+        val keyKeeper = KeyKeeper(
+            DBUtils.getDB(this),
+            Gson()
+        )
 
         // generate AES key
         val key = Cryptography.generateAESKey()
         // store AES key
-        val aesKeyKeeper = KeyKeeper(db, gson, Algorithm.AES)
-        aesKeyKeeper.store("Default AES key", key)
+        keyKeeper.storeAESKey(
+            AESKey("Default AES key", key)
+        )
 
         // generate RSA key pair
         val keyPair = Cryptography.generateRSAKey()
         // store RSA key pair
-        val rsaKeyKeeper = KeyKeeper(db, gson, Algorithm.RSA)
-        rsaKeyKeeper.store("Default RSA key pair", keyPair)
+        keyKeeper.storeRSAKey(
+            RSAKeyPair("Default RSA key pair", keyPair)
+        )
 
         // set first time to false
         sp.edit()

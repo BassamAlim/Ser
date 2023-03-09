@@ -3,26 +3,19 @@ package bassamalim.ser.repository
 import android.content.SharedPreferences
 import bassamalim.ser.data.Prefs
 import bassamalim.ser.data.database.AppDatabase
-import bassamalim.ser.enums.Algorithm
 import bassamalim.ser.helpers.KeyKeeper
-import bassamalim.ser.models.MyKeyPair
-import com.google.gson.Gson
+import bassamalim.ser.models.RSAKeyPair
 import javax.inject.Inject
 
 class RSARepo @Inject constructor(
     private val sp: SharedPreferences,
     private val db: AppDatabase,
-    gson: Gson
+    private val keyKeeper: KeyKeeper
 ) {
 
-    private val keyKeeper = KeyKeeper(db, gson, Algorithm.RSA)
+    fun storeKey(keyPair: RSAKeyPair) = keyKeeper.storeRSAKey(keyPair)
 
-    fun storeKey(name: String, keyPair: MyKeyPair) {
-        keyKeeper.store(name, keyPair)
-    }
-    fun getKey(name: String): MyKeyPair {
-        return keyKeeper.get(name) as MyKeyPair
-    }
+    fun getKey(name: String): RSAKeyPair = keyKeeper.getRSAKey(name)
 
     fun setSelectedKey(name: String) {
         sp.edit()

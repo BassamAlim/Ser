@@ -6,6 +6,7 @@ import android.content.res.Resources
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import bassamalim.ser.data.database.AppDatabase
+import bassamalim.ser.helpers.KeyKeeper
 import bassamalim.ser.repository.*
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
@@ -45,6 +46,12 @@ object AppModule {
     @Provides @Singleton
     fun provideGson() = Gson()
 
+    @Provides @Singleton
+    fun provideKeyKeeper(
+        database: AppDatabase,
+        gson: Gson
+    ) = KeyKeeper(database, gson)
+
 
     @Provides @Singleton
     fun provideAboutRepository(
@@ -55,8 +62,8 @@ object AppModule {
     fun provideAESRepository(
         sharedPreferences: SharedPreferences,
         database: AppDatabase,
-        gson: Gson
-    ) = AESRepo(sharedPreferences, database, gson)
+        keyKeeper: KeyKeeper
+    ) = AESRepo(sharedPreferences, database, keyKeeper)
 
     @Provides @Singleton
     fun provideHomeRepository(
@@ -67,8 +74,8 @@ object AppModule {
     @Provides @Singleton
     fun provideKeysRepository(
         database: AppDatabase,
-        gson: Gson
-    ) = KeysRepo(database, gson)
+        keyKeeper: KeyKeeper
+    ) = KeysRepo(database, keyKeeper)
 
     @Provides @Singleton
     fun provideMainRepository(
@@ -80,8 +87,8 @@ object AppModule {
     fun provideRSARepository(
         sharedPreferences: SharedPreferences,
         database: AppDatabase,
-        gson: Gson
-    ) = RSARepo(sharedPreferences, database, gson)
+        keyKeeper: KeyKeeper
+    ) = RSARepo(sharedPreferences, database, keyKeeper)
 
     @Provides @Singleton
     fun provideSettingsRepository(

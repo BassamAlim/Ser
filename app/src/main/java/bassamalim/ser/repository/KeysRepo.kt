@@ -1,48 +1,44 @@
 package bassamalim.ser.repository
 
 import bassamalim.ser.data.database.AppDatabase
+import bassamalim.ser.helpers.KeyKeeper
 import bassamalim.ser.models.AESKey
-import bassamalim.ser.models.MyByteKeyPair
-import bassamalim.ser.models.RSAKey
-import bassamalim.ser.utils.Utils
-import com.google.gson.Gson
-import java.security.KeyPair
+import bassamalim.ser.models.MyKeyPair
+import bassamalim.ser.models.RSAKeyPair
+import bassamalim.ser.utils.Converter
 import javax.inject.Inject
 
 class KeysRepo @Inject constructor(
     private val db: AppDatabase,
-    private val gson: Gson
+    private val keyKeeper: KeyKeeper
 ) {
 
-    fun getAESKeys(): List<AESKey> {
-        return db.aesDao().getAll().map {
-            val key = gson.fromJson(it.key, ByteArray::class.java)
-            val decoded = Utils.fromStore(key)
-            AESKey(it.name, Utils.encode(decoded))
-        }
-    }
+    fun getAESKeys(): List<AESKey> = keyKeeper.getAllAES()
+
+    fun getRSAKeys(): List<RSAKeyPair> = keyKeeper.getAllRSA()
 
     fun insertAESKey(name: String, key: String) {
-        val decoded = Utils.decode(key)
-        val keyJson = gson.toJson(decoded)
-        db.aesDao().insert(name, keyJson)
-    }
-
-    fun getRSAKeys(): List<RSAKey> {
-        return db.rsaDao().getAll().map {
-            val key = gson.fromJson(it.key, KeyPair::class.java)
-            RSAKey(it.name, key)
-        }
+        val keyObj = AESKey(
+            name = name,
+            secret = Converter.toSecretKey(key)
+        )
+        keyKeeper.storeAESKey(keyObj)
     }
 
     fun insertRSAKey(name: String, public: String, private: String) {
-        val keyPair = MyByteKeyPair(
-            Utils.decode(public),
-            Utils.decode(private)
+        val keyObj = RSAKeyPair(
+            name,
+            MyKeyPair(
+                Converter.toPublicKey(public),
+                Converter.toPrivateKey(private)
+            )
         )
-        val keyJson = gson.toJson(keyPair)
-        db.rsaDao().insert(name, keyJson)
+        keyKeeper.storeRSAKey(keyObj)
     }
+
+    fun removeAESKey(name: String) = db.aesDao().delete(name)
+
+    fun removeRSAKey(name: String) = db.rsaDao().delete(name)
 
     fun getAESKeyNames() = db.aesDao().getNames()
 

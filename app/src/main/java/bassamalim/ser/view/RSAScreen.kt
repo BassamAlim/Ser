@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
 import bassamalim.ser.enums.Operation
-import bassamalim.ser.models.RSAKeyPair
+import bassamalim.ser.state.RSAState
 import bassamalim.ser.ui.components.*
 import bassamalim.ser.ui.theme.AppTheme
 import bassamalim.ser.viewmodel.RSAVM
@@ -48,7 +48,7 @@ fun RSAUI(
             .verticalScroll(scrollState)
     ) {
         RSAKeyCard(
-            keyPair = st.keyPair,
+            st = st,
             onCopyPublicKey = vm::onCopyPublicKey,
             onCopyPrivateKey = vm::onCopyPrivateKey,
             onSelectKey = vm::onSelectKey,
@@ -139,7 +139,7 @@ fun RSAUI(
 
 @Composable
 fun RSAKeyCard(
-    keyPair: RSAKeyPair,
+    st: RSAState,
     modifier: Modifier = Modifier,
     onCopyPublicKey: () -> Unit,
     onCopyPrivateKey: () -> Unit,
@@ -167,7 +167,7 @@ fun RSAKeyCard(
                 padding = PaddingValues(start = 6.dp, end = 12.dp)
             ) {
                 MyText(
-                    text = "${stringResource(R.string.key_pair)}: ${keyPair.name}",
+                    text = "${stringResource(R.string.key_pair)}: ${st.keyName}",
                     fontSize = 22.sp,
                     textAlign = TextAlign.Start,
                     textColor = AppTheme.colors.strongText,
@@ -217,7 +217,7 @@ fun RSAKeyCard(
                         .background(AppTheme.colors.surface)
                 ) {
                     MyText(
-                        keyPair.public,
+                        st.publicKey,
                         fontSize = 20.sp,
                         modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
                     )
@@ -249,7 +249,7 @@ fun RSAKeyCard(
                         .background(AppTheme.colors.surface)
                 ) {
                     MyText(
-                        keyPair.private,
+                        st.privateKey,
                         fontSize = 20.sp,
                         modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
                     )

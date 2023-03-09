@@ -19,4 +19,7 @@ interface AESDao {
     @Query("INSERT INTO aes_keys (name, key) VALUES (:name, :key)")
     fun insert(name: String, key: String)
 
+    @Query("DELETE FROM aes_keys WHERE name = :name")
+    fun delete(name: String)
+
 }

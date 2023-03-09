@@ -4,7 +4,8 @@ import bassamalim.ser.enums.Operation
 import bassamalim.ser.models.AESKey
 
 data class AESState(
-    val key: AESKey = AESKey("", ""),
+    val keyName: String = "",
+    val secretKey: String = "",
     val operation: Operation = Operation.ENCRYPT,
     val result: String = "",
     val newKeyDialogShown: Boolean = false,

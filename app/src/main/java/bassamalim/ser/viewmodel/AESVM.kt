@@ -27,17 +27,15 @@ class AESVM @Inject constructor(
         private set
 
     private val _uiState = MutableStateFlow(AESState(
-        key = AESKey(
-            name = Prefs.SelectedAESKey.default as String,
-            value = Utils.encode(key)
-        )
+        keyName = key.name,
+        secretKey = key.asString()
     ))
     val uiState = _uiState.asStateFlow()
 
     fun onCopyKey() {
         Utils.copyToClipboard(
             app = app,
-            text = uiState.value.key.value,
+            text = uiState.value.secretKey,
             label = "AES Key"
         )
     }
@@ -54,10 +52,8 @@ class AESVM @Inject constructor(
         key = repo.getKey(name)
 
         _uiState.update { it.copy(
-            key = AESKey(
-                name = name,
-                value = Utils.encode(key)
-            ),
+            keyName = key.name,
+            secretKey = key.asString(),
             keyPickerShown = false
         )}
 
@@ -85,16 +81,18 @@ class AESVM @Inject constructor(
     fun onNewKeyDlgSubmit(name: String) {
         if (uiState.value.nameAlreadyExists) return
 
-        key = Cryptography.generateAESKey()
+        val secret = Cryptography.generateAESKey()
+        key = AESKey(
+            name = name,
+            secret = secret
+        )
 
-        repo.storeKey(name, key)
+        repo.storeKey(key)
 
         _uiState.update { it.copy(
-            newKeyDialogShown = false,
-            key = AESKey(
-                name = name,
-                value = Utils.encode(key)
-            )
+            keyName = key.name,
+            secretKey = key.asString(),
+            newKeyDialogShown = false
         )}
 
         repo.setSelectedKey(name)
@@ -129,8 +127,10 @@ class AESVM @Inject constructor(
         if (text.isEmpty()) return
 
         val result =
-            if (uiState.value.operation == Operation.ENCRYPT) Cryptography.encryptAES(text, key)
-            else Cryptography.decryptAES(text, key)
+            if (uiState.value.operation == Operation.ENCRYPT)
+                Cryptography.encryptAES(text, key.secret)
+            else
+                Cryptography.decryptAES(text, key.secret)
 
         _uiState.update { it.copy(
             result = result?.trim() ?: "Failed to ${uiState.value.operation.name.lowercase()}"

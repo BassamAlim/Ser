@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import bassamalim.ser.repository.KeysRepo
 import bassamalim.ser.state.KeysState
+import bassamalim.ser.utils.Converter
 import bassamalim.ser.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +55,7 @@ class KeysVM @Inject constructor(
         if (_uiState.value.aesNameAlreadyExists) return
 
         try {
-            val bytes = Utils.decode(value)
+            val bytes = Converter.decode(value)
 
             if (bytes.size != 16) throw java.lang.IllegalArgumentException()
 
@@ -71,6 +72,32 @@ class KeysVM @Inject constructor(
                 invalidAESKey = true
             )}
         }
+    }
+
+    fun onAESKeyCopy(idx: Int) {
+        Utils.copyToClipboard(
+            app = app,
+            text = _uiState.value.aesKeys[idx].asString(),
+            label = "AES Key"
+        )
+    }
+
+    fun onAESKeyRemove(idx: Int) {
+        repo.removeAESKey(_uiState.value.aesKeys[idx].name)
+
+        _uiState.update { it.copy(
+            aesKeys = repo.getAESKeys()
+        )}
+
+        aesKeyNames = repo.getAESKeyNames()
+    }
+
+    fun onAESKeyRename(idx: Int) {
+
+    }
+
+    fun onAESKeySetPrimary(idx: Int) {
+
     }
 
 
@@ -98,12 +125,10 @@ class KeysVM @Inject constructor(
         if (_uiState.value.rsaNameAlreadyExists) return
 
         try {
-            val publicBytes = Utils.decode(public)
-            println(publicBytes.size)
+            val publicBytes = Converter.decode(public)
             if (publicBytes.size != 62) throw java.lang.IllegalArgumentException()
 
-            val privateBytes = Utils.decode(private)
-            println(privateBytes.size)
+            val privateBytes = Converter.decode(private)
             if (privateBytes.size < 196 || privateBytes.size > 198)
                 throw java.lang.IllegalArgumentException()
 
@@ -122,19 +147,37 @@ class KeysVM @Inject constructor(
         }
     }
 
-    fun onAESKeyClk(idx: Int) {
-
-    }
-
-    fun onAESKeyCopy(idx: Int) {
+    fun onRSAPublicKeyCopy(idx: Int) {
         Utils.copyToClipboard(
             app = app,
-            text = _uiState.value.aesKeys[idx].value,
-            label = "AES Key"
+            text = _uiState.value.rsaKeys[idx].key.publicAsString(),
+            label = "RSA Public Key"
         )
     }
 
-    fun onRSAKeyClk(idx: Int) {
+    fun onRSAPrivateKeyCopy(idx: Int) {
+        Utils.copyToClipboard(
+            app = app,
+            text = _uiState.value.rsaKeys[idx].key.privateAsString(),
+            label = "RSA Private Key"
+        )
+    }
+
+    fun onRSAKeyRemove(idx: Int) {
+        repo.removeRSAKey(_uiState.value.rsaKeys[idx].name)
+
+        _uiState.update { it.copy(
+            rsaKeys = repo.getRSAKeys()
+        )}
+
+        rsaKeyNames = repo.getRSAKeyNames()
+    }
+
+    fun onRSAKeyRename(idx: Int) {
+
+    }
+
+    fun onRSAKeySetPrimary(idx: Int) {
 
     }
 

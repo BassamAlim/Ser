@@ -19,4 +19,7 @@ interface RSADao {
     @Query("INSERT INTO rsa_keys (name, key) VALUES (:name, :key)")
     fun insert(name: String, key: String)
 
+    @Query("DELETE FROM rsa_keys WHERE name = :name")
+    fun delete(name: String)
+
 }

@@ -1,7 +1,7 @@
 package bassamalim.ser.helpers
 
 import bassamalim.ser.models.MyKeyPair
-import bassamalim.ser.utils.Utils
+import bassamalim.ser.utils.Converter
 import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -38,7 +38,7 @@ object Cryptography {
         System.arraycopy(ivSpec.iv, 0, cipherArr, 0, ivSpec.iv.size)
         System.arraycopy(ciphertext, 0, cipherArr, ivSpec.iv.size, ciphertext.size)
 
-        return Utils.encode(cipherArr)
+        return Converter.encode(cipherArr)
     }
 
     fun decryptAES(
@@ -46,10 +46,10 @@ object Cryptography {
         secretKey: SecretKey
     ): String? {
         return try {
-            val decodedCiphertext = Utils.decode(ciphertext)
+            val decoded = Converter.decode(ciphertext)
 
-            val iv = decodedCiphertext.copyOfRange(0, 16)
-            val decodedCT = decodedCiphertext.copyOfRange(16, decodedCiphertext.size)
+            val iv = decoded.copyOfRange(0, 16)
+            val decodedCT = decoded.copyOfRange(16, decoded.size)
 
             val ivSpec = IvParameterSpec(iv)
 
@@ -57,9 +57,7 @@ object Cryptography {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
             val plaintext = cipher.doFinal(decodedCT)
             plaintext.decodeToString()
-        } catch (e: Exception) {
-            null
-        }
+        } catch (e: Exception) { null }
     }
 
 
@@ -83,7 +81,7 @@ object Cryptography {
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
         val ciphertext = cipher.doFinal(bytes)
 
-        return Utils.encode(ciphertext)
+        return Converter.encode(ciphertext)
     }
 
     fun decryptRSA(
@@ -91,15 +89,13 @@ object Cryptography {
         privateKey: PrivateKey
     ): String? {
         return try {
-            val decodedCiphertext = Utils.decode(ciphertext)
+            val decoded = Converter.decode(ciphertext)
 
             val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
             cipher.init(Cipher.DECRYPT_MODE, privateKey)
 
-            cipher.doFinal(decodedCiphertext).decodeToString()
-        } catch (e: Exception) {
-            null
-        }
+            cipher.doFinal(decoded).decodeToString()
+        } catch (e: Exception) { null }
     }
 
 }

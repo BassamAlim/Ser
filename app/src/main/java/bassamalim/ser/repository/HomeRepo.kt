@@ -8,10 +8,8 @@ import bassamalim.ser.utils.PrefUtils
 import javax.inject.Inject
 
 class HomeRepo @Inject constructor(
-    private val resources: Resources,
+    private val res: Resources,
     val sp: SharedPreferences
 ) {
-
-    val numeralsLanguage = Language.valueOf(PrefUtils.getString(sp, Prefs.NumeralsLanguage))
 
 }

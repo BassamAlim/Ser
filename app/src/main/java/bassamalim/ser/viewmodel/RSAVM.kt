@@ -27,18 +27,16 @@ class RSAVM @Inject constructor(
         private set
 
     private val _uiState = MutableStateFlow(RSAState(
-        keyPair = RSAKeyPair(
-            name = Prefs.SelectedRSAKey.default as String,
-            public = Utils.encode(keyPair.public),
-            private = Utils.encode(keyPair.private)
-        )
+        keyName = keyPair.name,
+        publicKey = keyPair.key.publicAsString(),
+        privateKey = keyPair.key.privateAsString()
     ))
     val uiState = _uiState.asStateFlow()
 
     fun onCopyPublicKey() {
         Utils.copyToClipboard(
             app = app,
-            text = uiState.value.keyPair.public,
+            text = uiState.value.publicKey,
             label = "RSA Public Key"
         )
     }
@@ -46,7 +44,7 @@ class RSAVM @Inject constructor(
     fun onCopyPrivateKey() {
         Utils.copyToClipboard(
             app = app,
-            text = uiState.value.keyPair.private,
+            text = uiState.value.privateKey,
             label = "RSA Private Key"
         )
     }
@@ -65,11 +63,9 @@ class RSAVM @Inject constructor(
         keyPair = repo.getKey(name)
 
         _uiState.update { it.copy(
-            keyPair = RSAKeyPair(
-                name = name,
-                public = Utils.encode(keyPair.public),
-                private = Utils.encode(keyPair.private)
-            ),
+            keyName = keyPair.name,
+            publicKey = keyPair.key.publicAsString(),
+            privateKey = keyPair.key.privateAsString(),
             keyPickerShown = false
         )}
     }
@@ -95,19 +91,18 @@ class RSAVM @Inject constructor(
     fun onSaveDlgSubmit(name: String) {
         if (uiState.value.nameAlreadyExists) return
 
-        keyPair = Cryptography.generateRSAKey()
+        val newKey = Cryptography.generateRSAKey()
+        keyPair = RSAKeyPair(name, newKey)
 
-        repo.storeKey(name, keyPair)
+        repo.storeKey(keyPair)
 
         repo.setSelectedKey(name)
 
         _uiState.update { it.copy(
-            newKeyDialogShown = false,
-            keyPair = RSAKeyPair(
-                name = name,
-                public = Utils.encode(keyPair.public),
-                private = Utils.encode(keyPair.private)
-            )
+            keyName = keyPair.name,
+            publicKey = keyPair.key.publicAsString(),
+            privateKey = keyPair.key.privateAsString(),
+            newKeyDialogShown = false
         )}
 
         keyNames = repo.getKeyNames()
@@ -141,9 +136,9 @@ class RSAVM @Inject constructor(
 
         val result =
             if (uiState.value.operation == Operation.ENCRYPT)
-                Cryptography.encryptRSA(text, keyPair.public)
+                Cryptography.encryptRSA(text, keyPair.key.public)
             else
-                Cryptography.decryptRSA(text, keyPair.private)
+                Cryptography.decryptRSA(text, keyPair.key.private)
 
         _uiState.update { it.copy(
             result = result?.trim() ?: "Failed to ${uiState.value.operation.name.lowercase()}"

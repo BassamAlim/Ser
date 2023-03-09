@@ -10,6 +10,4 @@ class MainRepo @Inject constructor(
     val sp: SharedPreferences
 ) {
 
-    val numeralsLanguage = PrefUtils.getNumeralsLanguage(sp)
-
 }

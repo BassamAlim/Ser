@@ -1,55 +1,69 @@
 package bassamalim.ser.helpers
 
 import bassamalim.ser.data.database.AppDatabase
-import bassamalim.ser.enums.Algorithm
+import bassamalim.ser.models.AESKey
 import bassamalim.ser.models.MyByteKeyPair
-import bassamalim.ser.models.MyKeyPair
-import bassamalim.ser.utils.Utils
+import bassamalim.ser.models.RSAKeyPair
+import bassamalim.ser.utils.Converter
 import com.google.gson.Gson
-import javax.crypto.SecretKey
+import javax.inject.Inject
 
-class KeyKeeper(
+class KeyKeeper @Inject constructor(
     private val db: AppDatabase,
-    private val gson: Gson,
-    private val algo: Algorithm
+    private val gson: Gson
 ) {
 
-    fun store(name: String, key: Any) {
-        when (algo) {
-            Algorithm.AES -> storeAESKey(name, key as SecretKey)
-            Algorithm.RSA -> storeRSAKey(name, key as MyKeyPair)
+    fun storeAESKey(key: AESKey) {
+        val bytes = key.asBytes()
+        val json = gson.toJson(bytes)
+        db.aesDao().insert(key.name, json)
+    }
+
+    fun getAESKey(name: String): AESKey {
+        val json = db.aesDao().getKey(name)
+        val bytes = gson.fromJson(json, ByteArray::class.java)
+        return AESKey(
+            name,
+            Converter.toSecretKey(bytes)
+        )
+    }
+
+    fun getAllAES(): List<AESKey> {
+        val keys = db.aesDao().getAll()
+        return keys.map {
+            val bytes = gson.fromJson(it.key, ByteArray::class.java)
+            AESKey(
+                it.name,
+                Converter.toSecretKey(bytes)
+            )
         }
     }
 
-    fun get(name: String): Any {
-        return when (algo) {
-            Algorithm.AES -> getAESKey(name)
-            Algorithm.RSA -> getRSAKey(name)
+
+    fun storeRSAKey(key: RSAKeyPair) {
+        val byteKeyPair = Converter.convert(key.key)
+        val json = gson.toJson(byteKeyPair)
+        db.rsaDao().insert(key.name, json)
+    }
+
+    fun getRSAKey(name: String): RSAKeyPair {
+        val json = db.rsaDao().getKey(name)
+        val keyPairBytes = gson.fromJson(json, MyByteKeyPair::class.java)
+        return RSAKeyPair(
+            name,
+            Converter.convert(keyPairBytes)
+        )
+    }
+
+    fun getAllRSA(): List<RSAKeyPair> {
+        val keys = db.rsaDao().getAll()
+        return keys.map {
+            val keyPairBytes = gson.fromJson(it.key, MyByteKeyPair::class.java)
+            RSAKeyPair(
+                it.name,
+                Converter.convert(keyPairBytes)
+            )
         }
-    }
-
-    private fun storeAESKey(name: String, key: SecretKey) {
-        val encoded = Utils.toStore(key)
-        val keyJson = gson.toJson(encoded)
-        db.aesDao().insert(name, keyJson)
-    }
-
-    private fun getAESKey(name: String): SecretKey {
-        val keyJson = db.aesDao().getKey(name)
-        val encoded = gson.fromJson(keyJson, ByteArray::class.java)
-        return Utils.fromStore(encoded)
-    }
-
-    private fun storeRSAKey(name: String, keyPair: MyKeyPair) {
-        val byteKeyPair = Utils.toStore(keyPair)
-        val keyJson = gson.toJson(byteKeyPair)
-        db.rsaDao().insert(name, keyJson)
-    }
-
-    private fun getRSAKey(name: String): MyKeyPair {
-        val keyJson = db.rsaDao().getKey(name)
-        val byteKeyPair = gson.fromJson(keyJson, MyByteKeyPair::class.java)
-        return Utils.fromStore(byteKeyPair)
     }
 
 }

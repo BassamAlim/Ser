@@ -80,13 +80,14 @@ fun MyClickableText(
     fontWeight: FontWeight = FontWeight.Normal,
     textAlign: TextAlign = TextAlign.Center,
     fontFamily: FontFamily = tajwal,
+    isEnabled: Boolean = true,
     innerPadding: PaddingValues = PaddingValues(vertical = 6.dp, horizontal = 15.dp),
     onClick: () -> Unit
 ) {
     Box(
         modifier
             .clip(RoundedCornerShape(10.dp))
-            .clickable { onClick() }
+            .clickable { if (isEnabled) onClick() }
     ) {
         Text(
             text = text,
