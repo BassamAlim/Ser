@@ -1,4 +1,4 @@
-package bassamalim.ser.view
+package bassamalim.ser.features.home
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import bassamalim.ser.core.ui.components.MySurface
-import bassamalim.ser.features.home.HomeVM
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)

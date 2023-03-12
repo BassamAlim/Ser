@@ -2,6 +2,8 @@ package bassamalim.ser.features.keys
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.navigation.NavController
+import bassamalim.ser.core.nav.Screen
 import bassamalim.ser.core.utils.Converter
 import bassamalim.ser.core.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,8 +27,16 @@ class KeysVM @Inject constructor(
     fun onStart() {
         _uiState.update { it.copy(
             aesKeys = repo.getAESKeys(),
-            rsaKeys = repo.getRSAKeys()
+            rsaKeys = repo.getRSAKeys(),
+            primaryAESKeyName = repo.getPrimaryAESKeyName(),
+            primaryRSAKeyName = repo.getPrimaryRSAKeyName()
         )}
+    }
+
+    fun onPublicKeyStore(nc: NavController) {
+        nc.navigate(
+            Screen.KeyStore.route
+        )
     }
 
     fun onAddAESKey() {
@@ -95,7 +105,10 @@ class KeysVM @Inject constructor(
     }
 
     fun onAESKeySetPrimary(idx: Int) {
-
+        repo.setPrimaryAESKeyName(aesKeyNames[idx])
+        _uiState.update { it.copy(
+            primaryAESKeyName = repo.getPrimaryAESKeyName()
+        )}
     }
 
 
@@ -176,7 +189,10 @@ class KeysVM @Inject constructor(
     }
 
     fun onRSAKeySetPrimary(idx: Int) {
-
+        repo.setPrimaryRSAKeyName(rsaKeyNames[idx])
+        _uiState.update { it.copy(
+            primaryRSAKeyName = repo.getPrimaryRSAKeyName()
+        )}
     }
 
 }

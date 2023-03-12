@@ -44,57 +44,57 @@ val bottomNavBarWeightMap = hashMapOf(
 val TabEnter = { an: AnimatedContentScope<NavBackStackEntry> ->
     val from = an.initialState.destination.route
     val to = an.targetState.destination.route
-    val fromWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[from] ?: 0
-    val toWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[to] ?: 0
+    val fromWeight = bottomNavBarWeightMap[from] ?: 0
+    val toWeight = bottomNavBarWeightMap[to] ?: 0
 
-    if (fromWeight < toWeight) bassamalim.ser.core.ui.inFromLeftTransition
-    else bassamalim.ser.core.ui.inFromRightTransition
+    if (fromWeight < toWeight) inFromLeftTransition
+    else inFromRightTransition
 }
 
 val TabExit = { an: AnimatedContentScope<NavBackStackEntry> ->
     val from = an.initialState.destination.route
     val to = an.targetState.destination.route
-    val fromWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[from] ?: 0
-    val toWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[to] ?: 0
+    val fromWeight = bottomNavBarWeightMap[from] ?: 0
+    val toWeight = bottomNavBarWeightMap[to] ?: 0
 
-    if (fromWeight < toWeight) bassamalim.ser.core.ui.outToRightTransition
-    else bassamalim.ser.core.ui.outToLeftTransition
+    if (fromWeight < toWeight) outToRightTransition
+    else outToLeftTransition
 }
 
 val TabPopEnter = { an: AnimatedContentScope<NavBackStackEntry> ->
     val from = an.initialState.destination.route
     val to = an.targetState.destination.route
-    val fromWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[from] ?: 0
-    val toWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[to] ?: 0
+    val fromWeight = bottomNavBarWeightMap[from] ?: 0
+    val toWeight = bottomNavBarWeightMap[to] ?: 0
 
-    if (fromWeight < toWeight) bassamalim.ser.core.ui.inFromLeftTransition
-    else bassamalim.ser.core.ui.inFromRightTransition
+    if (fromWeight < toWeight) inFromLeftTransition
+    else inFromRightTransition
 }
 
 val TabPopExit = { an: AnimatedContentScope<NavBackStackEntry> ->
     val from = an.initialState.destination.route
     val to = an.targetState.destination.route
-    val fromWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[from] ?: 0
-    val toWeight = bassamalim.ser.core.ui.bottomNavBarWeightMap[to] ?: 0
+    val fromWeight = bottomNavBarWeightMap[from] ?: 0
+    val toWeight = bottomNavBarWeightMap[to] ?: 0
 
-    if (fromWeight < toWeight) bassamalim.ser.core.ui.outToRightTransition
-    else bassamalim.ser.core.ui.outToLeftTransition
+    if (fromWeight < toWeight) outToRightTransition
+    else outToLeftTransition
 }
 
 val inFromRight = { _: AnimatedContentScope<NavBackStackEntry> ->
-    bassamalim.ser.core.ui.inFromRightTransition
+    inFromRightTransition
 }
 
 val inFromLeft = { _: AnimatedContentScope<NavBackStackEntry> ->
-    bassamalim.ser.core.ui.inFromLeftTransition
+    inFromLeftTransition
 }
 
 val outToRight = { _: AnimatedContentScope<NavBackStackEntry> ->
-    bassamalim.ser.core.ui.outToRightTransition
+    outToRightTransition
 }
 
 val outToLeft = { _: AnimatedContentScope<NavBackStackEntry> ->
-    bassamalim.ser.core.ui.outToLeftTransition
+    outToLeftTransition
 }
 
 val inFromRightTransition = slideInHorizontally(

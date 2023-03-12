@@ -17,8 +17,6 @@
         // Use windowSplashScreenAnimatedIcon to add either a drawable or an
         // animated drawable. One of these is required.
         <item name="windowSplashScreenAnimatedIcon">@drawable/icon</item>
-        <!--<item name="windowSplashScreenAnimationDuration">200</item>--> # Required for animated
-        icons
 
         <item name="android:windowBackground">@color/bg</item>
 

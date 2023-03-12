@@ -20,18 +20,20 @@ class RSAVM @Inject constructor(
 ): AndroidViewModel(app) {
 
     private var text = ""
-    private var keyPair = repo.getKey(Prefs.SelectedRSAKey.default as String)
+    private var keyPair = repo.getKey(Prefs.SelectedRSAKeyName.default as String)
     var keyNames = repo.getKeyNames()
         private set
 
-    private val _uiState = MutableStateFlow(
-        RSAState(
-        keyName = keyPair.name,
-        publicKey = keyPair.key.publicAsString(),
-        privateKey = keyPair.key.privateAsString()
-    )
-    )
+    private val _uiState = MutableStateFlow(RSAState())
     val uiState = _uiState.asStateFlow()
+
+    fun onStart() {
+        _uiState.update { it.copy(
+            keyName = keyPair.name,
+            publicKey = keyPair.key.publicAsString(),
+            privateKey = keyPair.key.privateAsString()
+        )}
+    }
 
     fun onCopyPublicKey() {
         Utils.copyToClipboard(

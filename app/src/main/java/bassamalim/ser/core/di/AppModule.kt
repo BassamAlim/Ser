@@ -10,11 +10,13 @@ import bassamalim.ser.core.helpers.KeyKeeper
 import bassamalim.ser.features.about.AboutRepo
 import bassamalim.ser.features.aes.AESRepo
 import bassamalim.ser.features.home.HomeRepo
+import bassamalim.ser.features.keyStore.KeyStoreRepo
 import bassamalim.ser.features.keys.KeysRepo
 import bassamalim.ser.features.main.MainRepo
 import bassamalim.ser.features.rsa.RSARepo
-import bassamalim.ser.features.settings.SettingsRepo
-import bassamalim.ser.features.welcome.WelcomeRepo
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import dagger.Module
@@ -51,6 +53,9 @@ object AppModule {
     fun provideRemoteConfig() = FirebaseRemoteConfig.getInstance()
 
     @Provides @Singleton
+    fun provideFirestore() = Firebase.firestore
+
+    @Provides @Singleton
     fun provideGson() = Gson()
 
     @Provides @Singleton
@@ -80,9 +85,15 @@ object AppModule {
 
     @Provides @Singleton
     fun provideKeysRepository(
+        sharedPreferences: SharedPreferences,
         database: AppDatabase,
         keyKeeper: KeyKeeper
-    ) = KeysRepo(database, keyKeeper)
+    ) = KeysRepo(sharedPreferences, database, keyKeeper)
+
+    @Provides @Singleton
+    fun provideKeyStoreRepository(
+        firestore: FirebaseFirestore
+    ) = KeyStoreRepo(firestore)
 
     @Provides @Singleton
     fun provideMainRepository(
@@ -96,16 +107,5 @@ object AppModule {
         database: AppDatabase,
         keyKeeper: KeyKeeper
     ) = RSARepo(sharedPreferences, database, keyKeeper)
-
-    @Provides @Singleton
-    fun provideSettingsRepository(
-        resources: Resources,
-        preferences: SharedPreferences
-    ) = SettingsRepo(resources, preferences)
-
-    @Provides @Singleton
-    fun provideWelcomeRepository(
-        preferences: SharedPreferences
-    ) = WelcomeRepo(preferences)
 
 }

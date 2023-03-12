@@ -4,22 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import bassamalim.ser.core.data.Prefs
-import bassamalim.ser.core.enums.Language
-import bassamalim.ser.core.enums.Theme
 
 object PrefUtils {
 
     fun getPreferences(context: Context): SharedPreferences =
         PreferenceManager.getDefaultSharedPreferences(context)
-
-    fun getLanguage(sp: SharedPreferences) =
-        Language.valueOf(getString(sp, Prefs.Language))
-
-    fun getNumeralsLanguage(sp: SharedPreferences) =
-        Language.valueOf(getString(sp, Prefs.NumeralsLanguage))
-
-    fun getTheme(sp: SharedPreferences) =
-        Theme.valueOf(getString(sp, Prefs.Theme))
 
     /**
      * Created as a fail safe in case the data type of the preference is changed

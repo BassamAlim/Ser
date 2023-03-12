@@ -20,17 +20,19 @@ class AESVM @Inject constructor(
 ): AndroidViewModel(app) {
 
     private var text = ""
-    private var key = repo.getKey(Prefs.SelectedAESKey.default as String)
+    private var key = repo.getKey(Prefs.SelectedAESKeyName.default as String)
     var keyNames = repo.getKeyNames()
         private set
 
-    private val _uiState = MutableStateFlow(
-        AESState(
-        keyName = key.name,
-        secretKey = key.asString()
-    )
-    )
+    private val _uiState = MutableStateFlow(AESState())
     val uiState = _uiState.asStateFlow()
+
+    fun onStart() {
+        _uiState.update { it.copy(
+            keyName = key.name,
+            secretKey = key.asString()
+        )}
+    }
 
     fun onCopyKey() {
         Utils.copyToClipboard(

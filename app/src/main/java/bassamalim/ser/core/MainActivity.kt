@@ -5,19 +5,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.LayoutDirection
 import bassamalim.ser.R
 import bassamalim.ser.core.data.GlobalVals
 import bassamalim.ser.core.data.Prefs
-import bassamalim.ser.core.enums.Language
 import bassamalim.ser.core.helpers.Cryptography
 import bassamalim.ser.core.helpers.KeyKeeper
 import bassamalim.ser.core.models.AESKey
 import bassamalim.ser.core.models.RSAKeyPair
 import bassamalim.ser.core.nav.Navigator
 import bassamalim.ser.core.ui.theme.AppTheme
-import bassamalim.ser.core.utils.ActivityUtils
 import bassamalim.ser.core.utils.DBUtils
 import bassamalim.ser.core.utils.PrefUtils
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -63,26 +59,16 @@ class MainActivity : ComponentActivity() {
     private fun preLaunch() {
         DBUtils.testDB(this, sp)
 
-//        ActivityUtils.onActivityCreateSetLocale(this)
-        ActivityUtils.onActivityCreateSetTheme(this)  // a must for the app to use xml themes
-//        ActivityUtils.onActivityCreateSetLocale(applicationContext)
-        ActivityUtils.onActivityCreateSetTheme(applicationContext)
-
         val shouldWelcome = PrefUtils.getBoolean(sp, Prefs.FirstTime)
         if (shouldWelcome) welcome()
     }
 
     private fun launch() {
-//        val shouldWelcome = PrefUtils.getBoolean(sp, Prefs.FirstTime)
         val navRoute = intent.getStringExtra("start_route")
 
         setContent {
-            ActivityUtils.onActivityCreateSetLocale(LocalContext.current)
-
-            AppTheme(
-                direction = getDirection()
-            ) {
-                Navigator(navRoute, false)
+            AppTheme {
+                Navigator(navRoute)
             }
         }
     }
@@ -91,15 +77,6 @@ class MainActivity : ComponentActivity() {
         initFirebase()
 
         fetchAndActivateRemoteConfig()
-
-//        setupBootReceiver()
-    }
-
-    private fun getDirection(): LayoutDirection {
-        val language = PrefUtils.getLanguage(sp)
-
-        return if (language == Language.ENGLISH) LayoutDirection.Ltr
-        else LayoutDirection.Rtl
     }
 
     /**

@@ -8,6 +8,4 @@ import javax.inject.Inject
 class MainRepo @Inject constructor(
     private val res: Resources,
     val sp: SharedPreferences
-) {
-
-}
+)

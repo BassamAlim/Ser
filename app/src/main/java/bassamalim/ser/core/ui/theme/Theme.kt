@@ -3,11 +3,6 @@ package bassamalim.ser.core.ui.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
-import bassamalim.ser.core.enums.Theme
-import bassamalim.ser.core.utils.PrefUtils
 
 object AppTheme {
     val colors: AppColors
@@ -28,23 +23,15 @@ object AppTheme {
 
 @Composable
 fun AppTheme(
-    theme: Theme = PrefUtils.getTheme(PrefUtils.getPreferences(LocalContext.current)),
     typography: AppTypography = AppTheme.typography,
     dimensions: AppDimensions = AppTheme.dimensions,
-    direction: LayoutDirection = LayoutDirection.Rtl,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
-        LocalColors provides getColors(theme),
+        LocalColors provides AppColors(),
         LocalDimensions provides dimensions,
-        LocalTypography provides typography,
-        LocalLayoutDirection provides direction
+        LocalTypography provides typography
     ) {
         content()
     }
-}
-
-private fun getColors(theme: Theme) = when (theme) {
-    Theme.DARK -> AppColors()
-    else -> AppColors()
 }

@@ -1,4 +1,4 @@
-package bassamalim.ser.view
+package bassamalim.ser.features.keys
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
@@ -10,13 +10,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +31,6 @@ import bassamalim.ser.core.models.AESKey
 import bassamalim.ser.core.models.RSAKeyPair
 import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
-import bassamalim.ser.features.keys.KeysVM
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -51,7 +48,7 @@ fun KeysUI(
 
     MyColumn {
         PrimaryPillBtn(text = stringResource(R.string.public_key_repo)) {
-            // TODO
+            vm.onPublicKeyStore(nc)
         }
 
         MyHorizontalDivider()
@@ -78,6 +75,7 @@ fun KeysUI(
                     itemsIndexed(st.aesKeys) { i, key ->
                         AESExpandableItem(
                             vm = vm,
+                            st = st,
                             key = key,
                             idx = i
                         )
@@ -107,6 +105,7 @@ fun KeysUI(
                     itemsIndexed(st.rsaKeys) { i, keyPair ->
                         RSAExpandableItem(
                             vm = vm,
+                            st = st,
                             idx = i,
                             keyPair = keyPair
                         )
@@ -221,7 +220,6 @@ fun AESKeyAddDialog(
     }
 }
 
-
 @Composable
 fun RSAKeyAddDialog(
     shown: Boolean,
@@ -314,6 +312,7 @@ fun RSAKeyAddDialog(
 @Composable
 fun AESExpandableItem(
     vm: KeysVM,
+    st: KeysState,
     key: AESKey,
     idx: Int
 ) {
@@ -341,6 +340,19 @@ fun AESExpandableItem(
                 textAlign = TextAlign.Start
             )
 
+            if (key.name == st.primaryAESKeyName) {
+                Box(
+                    modifier = Modifier.padding(end = 14.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .clip(CircleShape)
+                            .background(bassamalim.ser.core.ui.theme.Positive)
+                    )
+                }
+            }
+
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = stringResource(R.string.select),
@@ -352,18 +364,11 @@ fun AESExpandableItem(
         // expanded content
         if (expandedState) {
             MyColumn {
-                MyRow {
-                    SelectionContainer(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        MyText(
-                            key.asString(),
-                            fontSize = 18.sp
-                        )
-                    }
-
-                    CopyBtn(onClick = { vm.onAESKeyCopy(idx) })
-                }
+                KeySpace(
+                    titleResId = R.string.key,
+                    keyValue = key.asString(),
+                    onCopy = { vm.onAESKeyCopy(idx) }
+                )
 
                 MyRow {
                     MyClickableText(
@@ -374,12 +379,15 @@ fun AESExpandableItem(
                     MyClickableText(
                         text = stringResource(R.string.remove),
                         textColor = bassamalim.ser.core.ui.theme.Negative,
-                        isEnabled = idx != 0,
+                        isEnabled = key.name != st.primaryAESKeyName,
                         onClick = { vm.onAESKeyRemove(idx) }
                     )
 
                     MyClickableText(
-                        text = stringResource(R.string.set_primary),
+                        text = stringResource(
+                            if (key.name == st.primaryAESKeyName) R.string.primary
+                            else R.string.set_primary
+                        ),
                         onClick = { vm.onAESKeySetPrimary(idx) }
                     )
                 }
@@ -393,6 +401,7 @@ fun AESExpandableItem(
 @Composable
 fun RSAExpandableItem(
     vm: KeysVM,
+    st: KeysState,
     keyPair: RSAKeyPair,
     idx: Int
 ) {
@@ -420,6 +429,19 @@ fun RSAExpandableItem(
                 textAlign = TextAlign.Start
             )
 
+            if (keyPair.name == st.primaryRSAKeyName) {
+                Box(
+                    modifier = Modifier.padding(end = 14.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .clip(CircleShape)
+                            .background(bassamalim.ser.core.ui.theme.Positive)
+                    )
+                }
+            }
+
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = stringResource(R.string.select),
@@ -431,75 +453,17 @@ fun RSAExpandableItem(
         // expanded content
         if (expandedState) {
             MyColumn {
-                MyRow(
-                    padding = PaddingValues(start = 6.dp, end = 12.dp)
-                ) {
-                    MyText(
-                        text = stringResource(R.string.public_key),
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start,
-                        textColor = AppTheme.colors.strongText,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(top = 10.dp, start = 16.dp)
-                    )
+                KeySpace(
+                    titleResId = R.string.public_key,
+                    keyValue = keyPair.key.publicAsString(),
+                    onCopy = { vm.onRSAPublicKeyCopy(idx) }
+                )
 
-                    CopyBtn(
-                        size = 22.dp,
-                        onClick = { vm.onRSAPublicKeyCopy(idx) }
-                    )
-                }
-
-                SelectionContainer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .padding(all = 10.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .verticalScroll(rememberScrollState())
-                        .background(AppTheme.colors.surface)
-                ) {
-                    MyText(
-                        keyPair.key.publicAsString(),
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
-                    )
-                }
-
-                MyRow(
-                    padding = PaddingValues(start = 6.dp, end = 12.dp)
-                ) {
-                    MyText(
-                        text = stringResource(R.string.private_key),
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start,
-                        textColor = AppTheme.colors.strongText,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(top = 10.dp, start = 16.dp)
-                    )
-
-                    CopyBtn(
-                        size = 22.dp,
-                        onClick = { vm.onRSAPrivateKeyCopy(idx) }
-                    )
-                }
-
-                SelectionContainer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .padding(all = 10.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .verticalScroll(rememberScrollState())
-                        .background(AppTheme.colors.surface)
-                ) {
-                    MyText(
-                        keyPair.key.privateAsString(),
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
-                    )
-                }
+                KeySpace(
+                    titleResId = R.string.private_key,
+                    keyValue = keyPair.key.privateAsString(),
+                    onCopy = { vm.onRSAPrivateKeyCopy(idx) }
+                )
 
                 MyRow {
                     MyClickableText(
@@ -510,12 +474,15 @@ fun RSAExpandableItem(
                     MyClickableText(
                         text = stringResource(R.string.remove),
                         textColor = bassamalim.ser.core.ui.theme.Negative,
-                        isEnabled = idx != 0,
+                        isEnabled = keyPair.name != st.primaryRSAKeyName,
                         onClick = { vm.onRSAKeyRemove(idx) }
                     )
 
                     MyClickableText(
-                        text = stringResource(R.string.set_primary),
+                        text = stringResource(
+                            if (keyPair.name == st.primaryRSAKeyName) R.string.primary
+                            else R.string.set_primary
+                        ),
                         onClick = { vm.onRSAKeySetPrimary(idx) }
                     )
                 }

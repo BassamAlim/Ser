@@ -21,7 +21,7 @@
     <activity
         android:name=".core.MainActivity"
         android:exported="true"
-        android:theme="@style/SplashTheme">
+        android:theme="@style/Theme.Dark">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

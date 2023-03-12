@@ -89,14 +89,16 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation 'androidx.preference:preference:1.2.0'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0"
     implementation "androidx.media:media:1.6.0"
     implementation("androidx.glance:glance-appwidget:1.0.0-alpha05")
     implementation 'androidx.room:room-runtime:2.5.0'
     kapt 'androidx.room:room-compiler:2.5.0'
-    implementation 'androidx.core:core-ktx:1.9.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
+
     // Compose
     implementation "androidx.compose.runtime:runtime:$composeVersion"
     implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
@@ -111,10 +113,10 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.28.0'
     implementation 'com.google.accompanist:accompanist-pager:0.28.0'
     implementation 'com.google.accompanist:accompanist-pager-indicators:0.28.0'
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.29.1-alpha"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.29.2-rc"
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'com.google.android.material:material:1.8.0'
-    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'com.google.code.gson:gson:2.10.1'
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:30.5.0')
     implementation 'com.google.firebase:firebase-core'
@@ -122,15 +124,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-inappmessaging-display'
     implementation 'com.google.firebase:firebase-perf'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:2.45")
+    kapt("com.google.dagger:hilt-android-compiler:2.45")
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
     implementation 'io.coil-kt:coil-compose:2.2.2'

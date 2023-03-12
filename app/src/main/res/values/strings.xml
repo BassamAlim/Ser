@@ -257,5 +257,7 @@
     <string name="remove">Remove</string>
     <string name="rename">Rename</string>
     <string name="set_primary">Set primary</string>
+    <string name="primary">Primary</string>
+    <string name="publish_key">Publish your primary public RSA key to Ser\'s public key repository</string>
 
 </resources>

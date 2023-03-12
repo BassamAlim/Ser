@@ -1,4 +1,4 @@
-package bassamalim.ser.view
+package bassamalim.ser.features.more
 
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -16,7 +16,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import bassamalim.ser.R
 import bassamalim.ser.core.ui.components.MySquareButton
-import bassamalim.ser.features.more.MoreVM
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -40,15 +39,18 @@ fun MoreUI(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            MySquareButton(R.string.settings, R.drawable.ic_settings) {
-                vm.gotoSettings(nc)
-            }
-
             MySquareButton(
                 textResId = R.string.contact,
                 imageResId = R.drawable.ic_mail
             ) {
                 vm.contactMe(ctx)
+            }
+
+            MySquareButton(
+                textResId = R.string.share_app,
+                imageResId = R.drawable.ic_share
+            ) {
+                vm.shareApp(ctx)
             }
         }
 
@@ -56,13 +58,6 @@ fun MoreUI(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            MySquareButton(
-                textResId = R.string.share_app,
-                imageResId = R.drawable.ic_share
-            ) {
-                vm.shareApp(ctx)
-            }
-
             MySquareButton(
                 textResId = R.string.about,
                 imageResId = R.drawable.ic_info

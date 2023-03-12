@@ -1,19 +1,24 @@
 package bassamalim.ser.core.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import bassamalim.ser.R
 import bassamalim.ser.core.ui.theme.AppTheme
 
@@ -176,5 +181,42 @@ fun KeyPickerDialog(
                 onClick = onCancel
             )
         }
+    }
+}
+
+@Composable
+fun KeySpace(
+    titleResId: Int,
+    keyValue: String,
+    onCopy: () -> Unit
+) {
+    MyRow(
+        padding = PaddingValues(start = 6.dp, end = 12.dp)
+    ) {
+        MyText(
+            text = stringResource(titleResId),
+            textAlign = TextAlign.Start,
+            modifier = Modifier
+                .weight(1f)
+                .padding(top = 10.dp, start = 16.dp)
+        )
+
+        CopyBtn(onClick = onCopy)
+    }
+
+    SelectionContainer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(20.dp, 100.dp)
+            .padding(all = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .verticalScroll(rememberScrollState())
+            .background(AppTheme.colors.surface)
+    ) {
+        MyText(
+            keyValue,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 10.dp)
+        )
     }
 }

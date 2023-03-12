@@ -95,7 +95,7 @@ fun MyClickableText(
             fontSize = fontSize,
             style = TextStyle(
                 fontFamily = fontFamily,
-                color = textColor,
+                color = if (isEnabled) textColor else bassamalim.ser.core.ui.theme.Grey,
                 fontWeight = fontWeight,
                 textAlign = textAlign,
                 lineHeight = fontSize * 1.4

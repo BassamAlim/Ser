@@ -10,6 +10,4 @@ import javax.inject.Inject
 class HomeRepo @Inject constructor(
     private val res: Resources,
     val sp: SharedPreferences
-) {
-
-}
+)

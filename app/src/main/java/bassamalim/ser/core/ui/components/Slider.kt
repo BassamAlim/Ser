@@ -10,7 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import bassamalim.ser.R
 import bassamalim.ser.core.ui.theme.AppTheme
-import bassamalim.ser.core.utils.LangUtils.translateNums
 
 @Composable
 fun MySlider(
@@ -51,11 +50,7 @@ fun MyValuedSlider(
     val context = LocalContext.current
     var currentValue by remember { mutableStateOf(initialValue) }
     var sliderText by remember {
-        mutableStateOf(
-            translateNums(
-                context, (initialValue - progressMin).toInt().toString()
-            )
-        )
+        mutableStateOf((initialValue - progressMin).toInt().toString())
     }
 
     Row(
@@ -80,7 +75,7 @@ fun MyValuedSlider(
                 sliderText =
                     if (infinite && progress == valueRange.endInclusive)
                         context.getString(R.string.infinite)
-                    else translateNums(context, progressStr)
+                    else progressStr
 
                 onValueChange(progress)
             },

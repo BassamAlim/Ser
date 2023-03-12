@@ -1,14 +1,18 @@
 package bassamalim.ser.features.keys
 
+import android.content.SharedPreferences
+import bassamalim.ser.core.data.Prefs
 import bassamalim.ser.core.data.database.AppDatabase
 import bassamalim.ser.core.helpers.KeyKeeper
 import bassamalim.ser.core.models.AESKey
 import bassamalim.ser.core.models.MyKeyPair
 import bassamalim.ser.core.models.RSAKeyPair
 import bassamalim.ser.core.utils.Converter
+import bassamalim.ser.core.utils.PrefUtils
 import javax.inject.Inject
 
 class KeysRepo @Inject constructor(
+    private val sp: SharedPreferences,
     private val db: AppDatabase,
     private val keyKeeper: KeyKeeper
 ) {
@@ -16,6 +20,20 @@ class KeysRepo @Inject constructor(
     fun getAESKeys(): List<AESKey> = keyKeeper.getAllAES()
 
     fun getRSAKeys(): List<RSAKeyPair> = keyKeeper.getAllRSA()
+
+    fun getPrimaryAESKeyName() = PrefUtils.getString(sp, Prefs.PrimaryAESKeyName)
+    fun setPrimaryAESKeyName(name: String) {
+        sp.edit()
+            .putString(Prefs.PrimaryAESKeyName.key, name)
+            .apply()
+    }
+
+    fun getPrimaryRSAKeyName() = PrefUtils.getString(sp, Prefs.PrimaryRSAKeyName)
+    fun setPrimaryRSAKeyName(name: String) {
+        sp.edit()
+            .putString(Prefs.PrimaryRSAKeyName.key, name)
+            .apply()
+    }
 
     fun insertAESKey(name: String, key: String) {
         val keyObj = AESKey(

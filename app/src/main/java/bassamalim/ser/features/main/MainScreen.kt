@@ -1,4 +1,4 @@
-package bassamalim.ser.view
+package bassamalim.ser.features.main
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
@@ -18,7 +18,11 @@ import bassamalim.ser.R
 import bassamalim.ser.core.ui.*
 import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
-import bassamalim.ser.features.main.MainVM
+import bassamalim.ser.features.aes.AESUI
+import bassamalim.ser.features.home.HomeUI
+import bassamalim.ser.features.keys.KeysUI
+import bassamalim.ser.features.rsa.RSAUI
+import bassamalim.ser.features.more.MoreUI
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -55,10 +59,10 @@ fun NavigationGraph(
     ) {
         composable(
             route = BottomNavItem.AES.route,
-            enterTransition = bassamalim.ser.core.ui.TabEnter,
-            exitTransition = bassamalim.ser.core.ui.TabExit,
-            popEnterTransition = bassamalim.ser.core.ui.TabPopEnter,
-            popExitTransition = bassamalim.ser.core.ui.TabPopExit
+            enterTransition = TabEnter,
+            exitTransition = TabExit,
+            popEnterTransition = TabPopEnter,
+            popExitTransition = TabPopExit
         ) {
             AESUI(
                 vm = hiltViewModel()
@@ -67,10 +71,10 @@ fun NavigationGraph(
 
         composable(
             route = BottomNavItem.Home.route,
-            enterTransition = bassamalim.ser.core.ui.TabEnter,
-            exitTransition = bassamalim.ser.core.ui.TabExit,
-            popEnterTransition = bassamalim.ser.core.ui.TabPopEnter,
-            popExitTransition = bassamalim.ser.core.ui.TabPopExit
+            enterTransition = TabEnter,
+            exitTransition = TabExit,
+            popEnterTransition = TabPopEnter,
+            popExitTransition = TabPopExit
         ) {
             HomeUI(
                 nc = navController,
@@ -80,10 +84,10 @@ fun NavigationGraph(
 
         composable(
             route = BottomNavItem.Keys.route,
-            enterTransition = bassamalim.ser.core.ui.TabEnter,
-            exitTransition = bassamalim.ser.core.ui.TabExit,
-            popEnterTransition = bassamalim.ser.core.ui.TabPopEnter,
-            popExitTransition = bassamalim.ser.core.ui.TabPopExit
+            enterTransition = TabEnter,
+            exitTransition = TabExit,
+            popEnterTransition = TabPopEnter,
+            popExitTransition = TabPopExit
         ) {
             KeysUI(
                 nc = navController,
@@ -93,10 +97,10 @@ fun NavigationGraph(
 
         composable(
             route = BottomNavItem.More.route,
-            enterTransition = bassamalim.ser.core.ui.TabEnter,
-            exitTransition = bassamalim.ser.core.ui.TabExit,
-            popEnterTransition = bassamalim.ser.core.ui.TabPopEnter,
-            popExitTransition = bassamalim.ser.core.ui.TabPopExit
+            enterTransition = TabEnter,
+            exitTransition = TabExit,
+            popEnterTransition = TabPopEnter,
+            popExitTransition = TabPopExit
         ) {
             MoreUI(
                 nc = navController,
@@ -106,10 +110,10 @@ fun NavigationGraph(
 
         composable(
             route = BottomNavItem.RSA.route,
-            enterTransition = bassamalim.ser.core.ui.TabEnter,
-            exitTransition = bassamalim.ser.core.ui.TabExit,
-            popEnterTransition = bassamalim.ser.core.ui.TabPopEnter,
-            popExitTransition = bassamalim.ser.core.ui.TabPopExit
+            enterTransition = TabEnter,
+            exitTransition = TabExit,
+            popEnterTransition = TabPopEnter,
+            popExitTransition = TabPopExit
         ) {
             RSAUI(
                 vm = hiltViewModel()

@@ -19,7 +19,7 @@ class RSARepo @Inject constructor(
 
     fun setSelectedKey(name: String) {
         sp.edit()
-            .putString(Prefs.SelectedRSAKey.key, name)
+            .putString(Prefs.SelectedRSAKeyName.key, name)
             .apply()
     }
 

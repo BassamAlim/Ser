@@ -5,9 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import bassamalim.ser.core.nav.Screen
 import bassamalim.ser.core.data.GlobalVals
-import bassamalim.ser.features.more.MoreState
+import bassamalim.ser.core.nav.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,23 +17,6 @@ class MoreVM @Inject constructor(): ViewModel() {
 
     private val _uiState = MutableStateFlow(MoreState())
     val uiState = _uiState.asStateFlow()
-
-    /*fun goto###(nc: NavController) {
-        nc.navigate(Screen.###.route)
-    }*/
-
-    /*fun goto###(nc: NavController) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            nc.navigate(Screen.###.route)
-        else
-            _uiState.update { it.copy(
-                shouldShowUnsupported = true
-            )}
-    }*/
-
-    fun gotoSettings(nc: NavController) {
-        nc.navigate(Screen.Settings.route)
-    }
 
     fun contactMe(ctx: Context) {
         val contactIntent = Intent(

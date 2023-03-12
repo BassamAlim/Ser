@@ -19,7 +19,7 @@ class AESRepo @Inject constructor(
 
     fun setSelectedKey(name: String) {
         sp.edit()
-            .putString(Prefs.SelectedAESKey.key, name)
+            .putString(Prefs.SelectedAESKeyName.key, name)
             .apply()
     }
 

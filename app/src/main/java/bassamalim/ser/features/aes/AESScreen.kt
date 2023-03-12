@@ -1,4 +1,4 @@
-package bassamalim.ser.view
+package bassamalim.ser.features.aes
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -12,7 +12,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -24,10 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
 import bassamalim.ser.core.enums.Operation
-import bassamalim.ser.features.aes.AESState
 import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
-import bassamalim.ser.features.aes.AESVM
 import kotlinx.coroutines.launch
 
 @Composable
@@ -38,6 +35,11 @@ fun AESUI(
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var scrolled = false
+
+    DisposableEffect(key1 = vm) {
+        vm.onStart()
+        onDispose {}
+    }
 
     MyParentColumn(
         scroll = false,
@@ -171,37 +173,26 @@ fun AESKeyCard(
                         .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
                 )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                Box(
+                    modifier = Modifier.padding(start = 20.dp)
                 ) {
-                    CopyBtn(onClick = onCopyKey)
-
-                    Box(
-                        modifier = Modifier.padding(start = 20.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = stringResource(R.string.select),
-                            tint = AppTheme.colors.text,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .rotate(rotationState)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = stringResource(R.string.select),
+                        tint = AppTheme.colors.text,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .rotate(rotationState)
+                    )
                 }
             }
 
             if (expandedState) {
-                SelectionContainer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(all = 10.dp)
-                ) {
-                    MyText(
-                        st.secretKey,
-                        fontSize = 20.sp
-                    )
-                }
+                KeySpace(
+                    titleResId = R.string.key,
+                    keyValue = st.secretKey,
+                    onCopy = onCopyKey
+                )
 
                 SecondaryPillBtn(
                     text = stringResource(R.string.select_key),
