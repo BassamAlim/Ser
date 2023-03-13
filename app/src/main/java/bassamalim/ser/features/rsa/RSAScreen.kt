@@ -139,7 +139,7 @@ fun RSAKeyCard(
 ) {
     ExpandableCard(
         title = "${stringResource(R.string.key_pair)}: ${st.keyName}",
-        modifier = Modifier.padding(vertical = 12.dp),
+        modifier = Modifier.padding(vertical = 6.dp),
         expandedContent = {
             KeySpace(
                 titleResId = R.string.public_key,
@@ -153,7 +153,9 @@ fun RSAKeyCard(
                 onCopy = onCopyPrivateKey
             )
 
-            MyRow {
+            MyRow(
+                padding = PaddingValues(0.dp)
+            ) {
                 SecondaryPillBtn(
                     text = stringResource(R.string.new_keypair),
                     modifier = Modifier

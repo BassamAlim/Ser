@@ -136,7 +136,7 @@ fun AESKeyCard(
 ) {
     ExpandableCard(
         title = "${stringResource(R.string.key)}: ${st.keyName}",
-        modifier = Modifier.padding(vertical = 12.dp),
+        modifier = Modifier.padding(vertical = 6.dp),
         expandedContent = {
             KeySpace(
                 titleResId = R.string.key,
@@ -144,7 +144,9 @@ fun AESKeyCard(
                 onCopy = onCopyKey
             )
 
-            MyRow {
+            MyRow(
+                padding = PaddingValues(0.dp)
+            ) {
                 SecondaryPillBtn(
                     text = stringResource(R.string.new_key),
                     modifier = Modifier

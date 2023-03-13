@@ -24,6 +24,7 @@ import bassamalim.ser.core.ui.theme.AppTheme
 fun ExpandableCard(
     title: String,
     modifier: Modifier = Modifier,
+    innerPadding: PaddingValues = PaddingValues(vertical = 4.dp),
     extraVisible: @Composable () -> Unit = {},
     expandedContent: @Composable () -> Unit
 ) {
@@ -32,6 +33,7 @@ fun ExpandableCard(
 
     MyClickableSurface(
         modifier = modifier
+            .padding(vertical = 6.dp)
             .animateContentSize(
                 animationSpec = TweenSpec(
                     durationMillis = 300,
@@ -41,7 +43,9 @@ fun ExpandableCard(
         color = AppTheme.colors.primary,
         onClick = { expandedState = !expandedState }
     ) {
-        MyColumn {
+        MyColumn(
+            modifier = Modifier.padding(innerPadding)
+        ) {
             MyRow(
                 arrangement = Arrangement.SpaceBetween,
                 padding = PaddingValues(start = 6.dp, end = 12.dp)
@@ -66,14 +70,20 @@ fun ExpandableCard(
                         contentDescription = stringResource(R.string.select),
                         tint = AppTheme.colors.text,
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(36.dp)
                             .rotate(rotationState)
                     )
                 }
             }
 
             if (expandedState) {
-                expandedContent()
+                Box(
+                    modifier = Modifier.padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
+                ) {
+                    MyColumn {
+                        expandedContent()
+                    }
+                }
             }
         }
     }
