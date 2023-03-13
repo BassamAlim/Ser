@@ -11,10 +11,14 @@ import bassamalim.ser.features.about.AboutRepo
 import bassamalim.ser.features.aes.AESRepo
 import bassamalim.ser.features.aesKeyGen.AESKeyGenRepo
 import bassamalim.ser.features.home.HomeRepo
+import bassamalim.ser.features.keyPicker.KeyPickerRepo
+import bassamalim.ser.features.keyPublisher.KeyPublisherRepo
+import bassamalim.ser.features.keyRename.KeyRenameRepo
 import bassamalim.ser.features.keyStore.KeyStoreRepo
 import bassamalim.ser.features.keys.KeysRepo
 import bassamalim.ser.features.main.MainRepo
 import bassamalim.ser.features.rsa.RSARepo
+import bassamalim.ser.features.rsaKeyGen.RSAKeyGenRepo
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -73,10 +77,8 @@ object AppModule {
 
     @Provides @Singleton
     fun provideAESRepository(
-        sharedPreferences: SharedPreferences,
-        database: AppDatabase,
         keyKeeper: KeyKeeper
-    ) = AESRepo(sharedPreferences, database, keyKeeper)
+    ) = AESRepo(keyKeeper)
 
     @Provides @Singleton
     fun provideHomeRepository(
@@ -94,9 +96,8 @@ object AppModule {
     @Provides @Singleton
     fun provideKeyStoreRepository(
         sharedPreferences: SharedPreferences,
-        firestore: FirebaseFirestore,
-        keyKeeper: KeyKeeper
-    ) = KeyStoreRepo(sharedPreferences, firestore, keyKeeper)
+        firestore: FirebaseFirestore
+    ) = KeyStoreRepo(sharedPreferences, firestore)
 
     @Provides @Singleton
     fun provideMainRepository(
@@ -106,10 +107,8 @@ object AppModule {
 
     @Provides @Singleton
     fun provideRSARepository(
-        sharedPreferences: SharedPreferences,
-        database: AppDatabase,
         keyKeeper: KeyKeeper
-    ) = RSARepo(sharedPreferences, database, keyKeeper)
+    ) = RSARepo(keyKeeper)
 
     @Provides @Singleton
     fun provideAESKeyGenRepository(
@@ -117,5 +116,32 @@ object AppModule {
         database: AppDatabase,
         keyKeeper: KeyKeeper
     ) = AESKeyGenRepo(sharedPreferences, database, keyKeeper)
+
+    @Provides @Singleton
+    fun provideRSAKeyGenRepository(
+        sharedPreferences: SharedPreferences,
+        database: AppDatabase,
+        keyKeeper: KeyKeeper
+    ) = RSAKeyGenRepo(sharedPreferences, database, keyKeeper)
+
+    @Provides @Singleton
+    fun provideKeyPickerRepository(
+        sharedPreferences: SharedPreferences,
+        keyKeeper: KeyKeeper
+    ) = KeyPickerRepo(sharedPreferences, keyKeeper)
+
+    @Provides @Singleton
+    fun provideKeyPublisherRepository(
+        sharedPreferences: SharedPreferences,
+        database: AppDatabase,
+        firestore: FirebaseFirestore,
+        keyKeeper: KeyKeeper
+    ) = KeyPublisherRepo(sharedPreferences, database, firestore, keyKeeper)
+
+    @Provides @Singleton
+    fun provideKeyRenameRepository(
+        sharedPreferences: SharedPreferences,
+        database: AppDatabase
+    ) = KeyRenameRepo(sharedPreferences, database)
 
 }

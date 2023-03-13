@@ -22,4 +22,7 @@ interface RSADao {
     @Query("DELETE FROM rsa_keys WHERE name = :name")
     fun delete(name: String)
 
+    @Query("UPDATE rsa_keys SET name = :newName WHERE name = :oldName")
+    fun rename(oldName: String, newName: String)
+
 }

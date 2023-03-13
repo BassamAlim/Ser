@@ -17,10 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
+import bassamalim.ser.core.enums.Algorithm
 import bassamalim.ser.core.enums.Operation
+import bassamalim.ser.core.models.AESKey
 import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
-import bassamalim.ser.features.aesKeyGen.AESKeyGenUI
+import bassamalim.ser.features.aesKeyGen.AESKeyGenDlg
+import bassamalim.ser.features.keyPicker.KeyPickerDlg
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,8 +50,7 @@ fun AESUI(
             st = st,
             onCopyKey = vm::onCopyKey,
             onSelectKey = vm::onSelectKey,
-            onNewKey = vm::onNewKey,
-            onImportKey = vm::onImportKey,
+            onNewKey = vm::onNewKey
         )
 
         TwoWaySwitch(
@@ -59,7 +61,7 @@ fun AESUI(
         )
 
         MyOutlinedTextField(
-            hint = stringResource(
+            label = stringResource(
                 if (st.operation == Operation.ENCRYPT) R.string.plaintext
                 else R.string.ciphertext
             ),
@@ -114,26 +116,18 @@ fun AESUI(
             }
         }
 
-        KeyPickerDialog(
-            st.keyPickerShown,
-            vm.keyNames,
+        KeyPickerDlg(
+            shown = st.keyPickerShown,
+            algorithm = Algorithm.AES,
             onCancel = vm::onKeyPickerCancel,
-            onKeySelected = { vm.onKeySelected(it) },
+            mainOnKeySelected = { vm.onKeySelected(it as AESKey) },
         )
 
-        AESKeyGenUI(
+        AESKeyGenDlg(
             shown = st.newKeyDialogShown,
             onCancel = vm::onNewKeyDlgCancel,
-            onSubmit = { vm.onNewKeyDlgSubmit(it) }
+            mainOnSubmit = { vm.onNewKeyDlgSubmit(it) }
         )
-
-        /*SaveKeyDialog(
-            st.newKeyDialogShown,
-            st.nameAlreadyExists,
-            onTextChange = { vm.onNewKeyDlgNameCh(it) },
-            onSubmit = { vm.onNewKeyDlgSubmit(it) },
-            onCancel = vm::onNewKeyDlgCancel
-        )*/
     }
 }
 
@@ -142,8 +136,7 @@ fun AESKeyCard(
     st: AESState,
     onCopyKey: () -> Unit,
     onSelectKey: () -> Unit,
-    onNewKey: () -> Unit,
-    onImportKey: () -> Unit
+    onNewKey: () -> Unit
 ) {
     ExpandableCard(
         title = "${stringResource(R.string.key)}: ${st.keyName}",
@@ -154,24 +147,23 @@ fun AESKeyCard(
                 onCopy = onCopyKey
             )
 
-            SecondaryPillBtn(
-                text = stringResource(R.string.select_key),
-                textColor = AppTheme.colors.text,
-                onClick = onSelectKey
-            )
+            MyRow {
+                SecondaryPillBtn(
+                    text = stringResource(R.string.new_key),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 5.dp),
+                    onClick = onNewKey
+                )
 
-            SecondaryPillBtn(
-                text = stringResource(R.string.generate_new_key),
-                textColor = AppTheme.colors.text,
-                onClick = onNewKey
-            )
-
-            SecondaryPillBtn(
-                text = stringResource(R.string.import_key),
-                textColor = AppTheme.colors.text,
-                modifier = Modifier.padding(bottom = 10.dp),
-                onClick = onImportKey
-            )
+                SecondaryPillBtn(
+                    text = stringResource(R.string.select_key),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 5.dp),
+                    onClick = onSelectKey
+                )
+            }
         }
     )
 }

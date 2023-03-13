@@ -90,8 +90,8 @@ fun MySuggestiveFormField(
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     fillFraction: Float = 0.85f,
-    onSuggestionChosen: (String) -> Unit = {},
-    onValueChange: (String) -> Unit = {}
+    onSuggestionChosen: (String) -> Unit,
+    onValueChange: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
@@ -149,17 +149,19 @@ fun MySuggestiveFormField(
 
 @Composable
 fun MyOutlinedTextField(
-    hint: String,
+    label: String,
     modifier: Modifier = Modifier,
+    initialValue: String = "",
+    padding: PaddingValues = PaddingValues(vertical = 10.dp),
     fontSize : TextUnit = 18.sp,
     isEnabled: Boolean = true,
     onValueChange: (String) -> Unit = {}
 ) {
-    var textState by remember { mutableStateOf("") }
+    var textState by remember { mutableStateOf(initialValue) }
 
     OutlinedTextField(
         value = textState,
-        modifier = modifier.padding(vertical = 10.dp),
+        modifier = modifier.padding(padding),
         textStyle = TextStyle(
             fontSize = fontSize
         ),
@@ -168,7 +170,7 @@ fun MyOutlinedTextField(
             onValueChange(it)
         },
         label = {
-            MyText(text = hint)
+            MyText(text = label)
         },
         enabled = isEnabled,
         shape = RoundedCornerShape(15.dp),
@@ -201,4 +203,107 @@ fun MyOutlinedTextField(
             }
         }
     )
+}
+
+@Composable
+fun MySuggestiveOutlinedTextField(
+    hint: String,
+    suggestions: List<String>,
+    modifier: Modifier = Modifier,
+    padding: PaddingValues = PaddingValues(vertical = 10.dp),
+    fontSize : TextUnit = 18.sp,
+    isEnabled: Boolean = true,
+    onSuggestionChosen: (Int) -> Unit,
+    onValueChange: (String) -> Unit
+) {
+    var textState by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
+    val focusManager = LocalFocusManager.current
+
+    Column {
+
+        OutlinedTextField(
+            value = textState,
+            modifier = modifier
+                .padding(padding)
+                .onGloballyPositioned { coordinates ->
+                    textFieldSize = coordinates.size.toSize()
+                },
+            textStyle = TextStyle(
+                fontSize = fontSize
+            ),
+            onValueChange = {
+                textState = it
+                onValueChange(it)
+
+                expanded = true
+            },
+            label = {
+                MyText(text = hint)
+            },
+            enabled = isEnabled,
+            shape = RoundedCornerShape(15.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = AppTheme.colors.strongText,
+                cursorColor = AppTheme.colors.accent,
+                focusedBorderColor = AppTheme.colors.strongText,
+                unfocusedBorderColor = AppTheme.colors.text,
+                disabledTextColor = bassamalim.ser.core.ui.theme.Grey,
+                disabledLabelColor = bassamalim.ser.core.ui.theme.Grey,
+                disabledBorderColor = bassamalim.ser.core.ui.theme.Grey,
+                disabledPlaceholderColor = bassamalim.ser.core.ui.theme.Grey,
+                disabledLeadingIconColor = bassamalim.ser.core.ui.theme.Grey,
+                disabledTrailingIconColor = bassamalim.ser.core.ui.theme.Grey,
+            ),
+            trailingIcon = {
+                if (textState.isNotEmpty() && isEnabled) {
+                    IconButton(
+                        onClick = {
+                            textState = ""
+                            onValueChange("")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = "Clear",
+                            tint = AppTheme.colors.text
+                        )
+                    }
+                }
+            }
+        )
+
+        if (suggestions.isNotEmpty()) {
+            MaterialTheme(
+                shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(8.dp)),
+                colors = MaterialTheme.colors.copy(surface = AppTheme.colors.surface)
+            ) {
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier
+                        .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                        .heightIn(0.dp, 150.dp),
+                    properties = PopupProperties(focusable = false)
+                ) {
+                    suggestions.forEachIndexed { i, text ->
+                        DropdownMenuItem(
+                            onClick = {
+                                onSuggestionChosen(i)
+                                expanded = false
+                                focusManager.clearFocus()
+                            }
+                        ) {
+                            MyText(
+                                text,
+                                fontSize = 16.sp,
+                                textColor = AppTheme.colors.onSurface
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

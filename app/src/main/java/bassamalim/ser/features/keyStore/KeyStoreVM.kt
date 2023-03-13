@@ -1,13 +1,9 @@
 package bassamalim.ser.features.keyStore
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.provider.Settings
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import bassamalim.ser.core.models.StoreKey
 import bassamalim.ser.core.utils.Utils
-import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,43 +17,68 @@ class KeyStoreVM @Inject constructor(
     private val repo: KeyStoreRepo
 ): AndroidViewModel(app) {
 
-    private val publishedKey = repo.getPublishedKey()
+    private val deviceId = Utils.getDeviceId(app)
 
     private val _uiState = MutableStateFlow(KeyStoreState())
     val uiState = _uiState.asStateFlow()
 
     init {
-        refreshItems()
-    }
+        val publishedKeyName = repo.getPublishedKeyName()
 
-    @SuppressLint("HardwareIds")
-    fun onPublishKey() {
-        val deviceId = getDeviceId()
-
-        if (_uiState.value.items.any { it.deviceId == deviceId }) return
-        if (_uiState.value.items.any { it.name == publishedKey.name }) return
+        var deviceRegistered = true
+        viewModelScope.launch {
+            deviceRegistered = repo.deviceRegistered(deviceId)
+        }
+        if (publishedKeyName.isEmpty() && deviceRegistered)
+            removeOldKey()
 
         viewModelScope.launch {
-            repo.publishKey(
-                StoreKey(
-                    name = publishedKey.name,
-                    value = publishedKey.key.publicAsString(),
-                    deviceId = deviceId,
-                    created = Timestamp.now()
-                )
-            )
+            _uiState.update { it.copy(
+                keyPublished = publishedKeyName.isNotEmpty(),
+                userName = repo.getUserName(),
+                publishedKeyName = publishedKeyName,
+                items = repo.getKeys(),
+                loading = false
+            )}
         }
+    }
 
-        refreshItems()
+    fun onPublishKey() {
+        _uiState.update { it.copy(
+            keyPublisherShown = true
+        )}
+    }
+
+    fun onKeyPublisherCancel() {
+        _uiState.update { it.copy(
+            keyPublisherShown = false
+        )}
+    }
+
+    fun onKeyPublisherSubmit(userName: String, keyName: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(
+                keyPublished = true,
+                userName = userName,
+                publishedKeyName = keyName,
+                items = repo.getKeys(),
+                keyPublisherShown = false
+            )}
+        }
     }
 
     fun onRemoveKey() {
-        val deviceId = getDeviceId()
         viewModelScope.launch {
             repo.removeKey(deviceId)
-        }
 
-        refreshItems()
+            repo.setPublishedKeyName("")
+
+            _uiState.update { it.copy(
+                keyPublished = false,
+                publishedKeyName = "",
+                items = repo.getKeys()
+            )}
+        }
     }
 
     fun onCopyKey(idx: Int) {
@@ -68,25 +89,10 @@ class KeyStoreVM @Inject constructor(
         )
     }
 
-    private fun refreshItems() {
-        val deviceId = getDeviceId()
-
+    private fun removeOldKey() {
         viewModelScope.launch {
-            val items = repo.getKeys()
-            _uiState.update { it.copy(
-                items = items,
-                keyPublished = items.any { key -> key.deviceId == deviceId },
-                loading = false
-            )}
+            repo.removeKey(deviceId)
         }
-    }
-
-    @SuppressLint("HardwareIds")
-    private fun getDeviceId(): String {
-        return Settings.Secure.getString(
-            app.contentResolver,
-            Settings.Secure.ANDROID_ID
-        )
     }
 
 }

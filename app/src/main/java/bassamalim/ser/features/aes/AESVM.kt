@@ -16,13 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AESVM @Inject constructor(
     private val app: Application,
-    private val repo: AESRepo
+    repo: AESRepo
 ): AndroidViewModel(app) {
 
     private var text = ""
     private var key = repo.getKey(Prefs.SelectedAESKeyName.default as String)
-    var keyNames = repo.getKeyNames()
-        private set
 
     private val _uiState = MutableStateFlow(AESState())
     val uiState = _uiState.asStateFlow()
@@ -48,18 +46,14 @@ class AESVM @Inject constructor(
         )}
     }
 
-    fun onKeySelected(idx: Int) {
-        val name = keyNames[idx]
-
-        key = repo.getKey(name)
+    fun onKeySelected(selectedKey: AESKey) {
+        key = selectedKey
 
         _uiState.update { it.copy(
             keyName = key.name,
             secretKey = key.asString(),
             keyPickerShown = false
         )}
-
-        repo.setSelectedKey(name)
     }
 
     fun onKeyPickerCancel() {
@@ -74,26 +68,20 @@ class AESVM @Inject constructor(
         )}
     }
 
-    fun onNewKeyDlgSubmit(key: AESKey) {
-        this.key = key
+    fun onNewKeyDlgSubmit(newKey: AESKey) {
+        key = newKey
 
         _uiState.update { it.copy(
-            keyName = key.name,
-            secretKey = key.asString(),
+            keyName = newKey.name,
+            secretKey = newKey.asString(),
             newKeyDialogShown = false
         )}
-
-        keyNames = repo.getKeyNames()
     }
 
     fun onNewKeyDlgCancel() {
         _uiState.update { it.copy(
             newKeyDialogShown = false
         )}
-    }
-
-    fun onImportKey() {
-        // TODO
     }
 
     fun onOpSwitch(isDecrypt: Boolean) {

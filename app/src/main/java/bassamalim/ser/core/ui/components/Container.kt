@@ -58,11 +58,13 @@ fun MyFatColumn(
 @Composable
 fun MyColumn(
     modifier: Modifier = Modifier,
+    alignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    arrangement: Arrangement.Vertical = Arrangement.SpaceEvenly,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = arrangement,
+        horizontalAlignment = alignment,
         modifier = modifier.fillMaxWidth()
     ) {
         content()

@@ -3,8 +3,8 @@ package bassamalim.ser.features.keys
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.navigation.NavController
+import bassamalim.ser.core.enums.Algorithm
 import bassamalim.ser.core.nav.Screen
-import bassamalim.ser.core.utils.Converter
 import bassamalim.ser.core.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +28,7 @@ class KeysVM @Inject constructor(
         _uiState.update { it.copy(
             aesKeys = repo.getAESKeys(),
             rsaKeys = repo.getRSAKeys(),
-            publishedKeyValue = repo.getPublishedKeyValue()
+            publishedKeyName = repo.getPublishedKeyName()
         )}
     }
 
@@ -44,41 +44,19 @@ class KeysVM @Inject constructor(
         )}
     }
 
-    fun onAESKeyAddDialogNameChange(name: String) {
-        _uiState.update { it.copy(
-            aesNameAlreadyExists = aesKeyNames.any { n -> n == name }
-        )}
-    }
-
     fun onAESKeyAddDialogCancel() {
         _uiState.update { it.copy(
-            aesKeyAddDialogShown = false,
-            invalidAESKey = false,
-            aesNameAlreadyExists = false,
+            aesKeyAddDialogShown = false
         )}
     }
 
-    fun onAESKeyAddDialogSubmit(name: String, value: String) {
-        if (_uiState.value.aesNameAlreadyExists) return
+    fun onAESKeyAddDialogSubmit() {
+        _uiState.update { it.copy(
+            aesKeys = repo.getAESKeys(),
+            aesKeyAddDialogShown = false
+        )}
 
-        try {
-            val bytes = Converter.decode(value)
-
-            if (bytes.size != 16) throw java.lang.IllegalArgumentException()
-
-            repo.insertAESKey(name, value)
-
-            _uiState.update { it.copy(
-                aesKeys = repo.getAESKeys(),
-                aesKeyAddDialogShown = false
-            )}
-            aesKeyNames = repo.getAESKeyNames()
-
-        } catch (e: java.lang.IllegalArgumentException) {
-            _uiState.update { it.copy(
-                invalidAESKey = true
-            )}
-        }
+        aesKeyNames = repo.getAESKeyNames()
     }
 
     fun onAESKeyCopy(idx: Int) {
@@ -100,7 +78,11 @@ class KeysVM @Inject constructor(
     }
 
     fun onAESKeyRename(idx: Int) {
-
+        _uiState.update { it.copy(
+            keyRenameDialogShown = true,
+            keyRenameDialogAlgorithm = Algorithm.AES,
+            keyRenameDialogOldName = _uiState.value.aesKeys[idx].name
+        )}
     }
 
 
@@ -110,44 +92,19 @@ class KeysVM @Inject constructor(
         )}
     }
 
-    fun onRSAKeyAddDialogNameChange(name: String) {
-        _uiState.update { it.copy(
-            rsaNameAlreadyExists = rsaKeyNames.any { n -> n == name }
-        )}
-    }
-
     fun onRSAKeyAddDialogCancel() {
         _uiState.update { it.copy(
-            rsaKeyAddDialogShown = false,
-            rsaNameAlreadyExists = false,
-            invalidRSAKey = false
+            rsaKeyAddDialogShown = false
         )}
     }
 
-    fun onRSAKeyAddDialogSubmit(name: String, public: String, private: String) {
-        if (_uiState.value.rsaNameAlreadyExists) return
+    fun onRSAKeyAddDialogSubmit() {
+        _uiState.update { it.copy(
+            rsaKeys = repo.getRSAKeys(),
+            rsaKeyAddDialogShown = false
+        )}
 
-        try {
-            val publicBytes = Converter.decode(public)
-            if (publicBytes.size != 62) throw java.lang.IllegalArgumentException()
-
-            val privateBytes = Converter.decode(private)
-            if (privateBytes.size < 196 || privateBytes.size > 198)
-                throw java.lang.IllegalArgumentException()
-
-            repo.insertRSAKey(name, public, private)
-
-            _uiState.update { it.copy(
-                rsaKeys = repo.getRSAKeys(),
-                rsaKeyAddDialogShown = false
-            )}
-            rsaKeyNames = repo.getRSAKeyNames()
-
-        } catch (e: java.lang.IllegalArgumentException) {
-            _uiState.update { it.copy(
-                invalidRSAKey = true
-            )}
-        }
+        rsaKeyNames = repo.getRSAKeyNames()
     }
 
     fun onRSAPublicKeyCopy(idx: Int) {
@@ -177,7 +134,35 @@ class KeysVM @Inject constructor(
     }
 
     fun onRSAKeyRename(idx: Int) {
+        _uiState.update { it.copy(
+            keyRenameDialogShown = true,
+            keyRenameDialogAlgorithm = Algorithm.RSA,
+            keyRenameDialogOldName = _uiState.value.rsaKeys[idx].name
+        )}
+    }
 
+    fun onKeyRenameDialogCancel() {
+        _uiState.update { it.copy(
+            keyRenameDialogShown = false
+        )}
+    }
+
+    fun onKeyRenameDialogSubmit(newName: String) {
+        if (_uiState.value.keyRenameDialogAlgorithm == Algorithm.AES) {
+            aesKeyNames = repo.getAESKeyNames()
+
+            _uiState.update { it.copy(
+                aesKeys = repo.getAESKeys()
+            )}
+        }
+        else {
+            rsaKeyNames = repo.getRSAKeyNames()
+
+            _uiState.update { it.copy(
+                rsaKeys = repo.getRSAKeys(),
+                publishedKeyName = repo.getPublishedKeyName()
+            )}
+        }
     }
 
 }

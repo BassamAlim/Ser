@@ -36,7 +36,7 @@ fun PrimaryPillBtn(
     textColor: Color = AppTheme.colors.strongText,
     fontSize: TextUnit = 22.sp,
     enabled: Boolean = true,
-    padding: PaddingValues = PaddingValues(vertical = 20.dp),
+    padding: PaddingValues = PaddingValues(vertical = 16.dp),
     innerPadding: PaddingValues = PaddingValues(vertical = 3.dp),
     onClick: () -> Unit
 ) {

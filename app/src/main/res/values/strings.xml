@@ -235,6 +235,7 @@
     <string name="public_key_repo">Public key repository</string>
     <string name="save_key">Save key</string>
     <string name="key_name">Key name</string>
+    <string name="new_name">New name</string>
     <string name="pick_key">Pick a key</string>
     <string name="select_key">Select key</string>
     <string name="key_pair">Key pair</string>
@@ -252,15 +253,21 @@
     <string name="new_aes_key">New AES key</string>
     <string name="new_rsa_key">New RSA key</string>
     <string name="new_keypair">New key pair</string>
+    <string name="rename_key">Rename key</string>
+    <string name="rename_keypair">Rename key pair</string>
     <string name="key_value">Key value</string>
     <string name="key_name_exists">Key name already exists</string>
+    <string name="name_exists">Name already exists in the key store</string>
     <string name="key_value_invalid">Key value is invalid</string>
     <string name="remove">Remove</string>
     <string name="rename">Rename</string>
+    <string name="your_name">Your name</string>
     <string name="set_primary">Set primary</string>
     <string name="primary">Primary</string>
     <string name="public_key_store">Public Key Store</string>
-    <string name="publish_key">Publish my primary public RSA key</string>
-    <string name="remove_my_key">Remove my primary public RSA key</string>
+    <string name="publish">Publish</string>
+    <string name="publish_key">Publish Key</string>
+    <string name="publish_my_key">Publish a public key</string>
+    <string name="remove_my_key">Remove my public key</string>
 
 </resources>

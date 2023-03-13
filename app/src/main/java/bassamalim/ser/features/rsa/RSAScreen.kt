@@ -17,9 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
+import bassamalim.ser.core.enums.Algorithm
 import bassamalim.ser.core.enums.Operation
+import bassamalim.ser.core.models.RSAKeyPair
 import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
+import bassamalim.ser.features.keyPicker.KeyPickerDlg
+import bassamalim.ser.features.rsaKeyGen.RSAKeyGenDlg
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,8 +51,7 @@ fun RSAUI(
             onCopyPublicKey = vm::onCopyPublicKey,
             onCopyPrivateKey = vm::onCopyPrivateKey,
             onSelectKey = vm::onSelectKey,
-            onNewKey = vm::onNewKey,
-            onImportKey = vm::onImportKey,
+            onNewKey = vm::onNewKey
         )
 
         TwoWaySwitch(
@@ -59,7 +62,7 @@ fun RSAUI(
         )
 
         MyOutlinedTextField(
-            hint = stringResource(
+            label = stringResource(
                 if (st.operation == Operation.ENCRYPT) R.string.plaintext
                 else R.string.ciphertext
             ),
@@ -115,19 +118,17 @@ fun RSAUI(
             }
         }
 
-        KeyPickerDialog(
-            st.keyPickerShown,
-            vm.keyNames,
+        KeyPickerDlg(
+            shown = st.keyPickerShown,
+            algorithm = Algorithm.RSA,
             onCancel = vm::onKeyPickerCancel,
-            onKeySelected = { vm.onKeySelected(it) },
+            mainOnKeySelected = { vm.onKeySelected(it as RSAKeyPair) },
         )
 
-        SaveKeyDialog(
-            st.newKeyDialogShown,
-            st.nameAlreadyExists,
-            onTextChange = { vm.onNewKeyDlgNameCh(it) },
-            onSubmit = { vm.onSaveDlgSubmit(it) },
-            onCancel = vm::onNewKeyDlgCancel
+        RSAKeyGenDlg(
+            shown = st.newKeyDialogShown,
+            onCancel = vm::onNewKeyDlgCancel,
+            onSubmit = { vm.onNewKeyDlgSubmit(it) }
         )
     }
 }
@@ -138,8 +139,7 @@ fun RSAKeyCard(
     onCopyPublicKey: () -> Unit,
     onCopyPrivateKey: () -> Unit,
     onSelectKey: () -> Unit,
-    onNewKey: () -> Unit,
-    onImportKey: () -> Unit
+    onNewKey: () -> Unit
 ) {
     ExpandableCard(
         title = "${stringResource(R.string.key_pair)}: ${st.keyName}",
@@ -156,24 +156,23 @@ fun RSAKeyCard(
                 onCopy = onCopyPrivateKey
             )
 
-            SecondaryPillBtn(
-                text = stringResource(R.string.select_keypair),
-                textColor = AppTheme.colors.text,
-                onClick = onSelectKey
-            )
+            MyRow {
+                SecondaryPillBtn(
+                    text = stringResource(R.string.new_keypair),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 5.dp),
+                    onClick = onNewKey
+                )
 
-            SecondaryPillBtn(
-                text = stringResource( R.string.generate),
-                textColor = AppTheme.colors.text,
-                onClick = onNewKey
-            )
-
-            SecondaryPillBtn(
-                text = stringResource(R.string.import_keypair),
-                textColor = AppTheme.colors.text,
-                modifier = Modifier.padding(bottom = 10.dp),
-                onClick = onImportKey
-            )
+                SecondaryPillBtn(
+                    text = stringResource(R.string.select_keypair),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 5.dp),
+                    onClick = onSelectKey
+                )
+            }
         }
     )
 }

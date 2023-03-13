@@ -1,8 +1,9 @@
-package bassamalim.ser.features.aesKeyGen
+package bassamalim.ser.features.rsaKeyGen
 
 import androidx.lifecycle.ViewModel
 import bassamalim.ser.core.helpers.Cryptography
-import bassamalim.ser.core.models.AESKey
+import bassamalim.ser.core.models.MyKeyPair
+import bassamalim.ser.core.models.RSAKeyPair
 import bassamalim.ser.core.utils.Converter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,15 +12,17 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class AESKeyGenVM @Inject constructor(
-    private val repo: AESKeyGenRepo
+class RSAKeyGenVM @Inject constructor(
+    private val repo: RSAKeyGenRepo
 ): ViewModel() {
 
     private val keyNames = repo.getKeyNames()
-    private var name = ""
-    private var value = ""
+    var name = ""
+        private set
+    private var publicVal = ""
+    private var privateVal = ""
 
-    private val _uiState = MutableStateFlow(AESKeyGenState())
+    private val _uiState = MutableStateFlow(RSAKeyGenState())
     val uiState = _uiState.asStateFlow()
 
     fun onNameChange(name: String) {
@@ -29,17 +32,12 @@ class AESKeyGenVM @Inject constructor(
         )}
     }
 
-    fun onValueChange(value: String) {
-        try {
-            val bytes = Converter.decode(value)
+    fun onPublicChange(public: String) {
+        this.publicVal = public
+    }
 
-            if (bytes.size != 16) throw java.lang.IllegalArgumentException()
-        }
-        catch (e: java.lang.IllegalArgumentException) {
-            _uiState.update { it.copy(
-                valueInvalid = true
-            )}
-        }
+    fun onPrivateChange(private: String) {
+        this.privateVal = private
     }
 
     fun onGenerateCheckChange(checked: Boolean) {
@@ -49,17 +47,24 @@ class AESKeyGenVM @Inject constructor(
         )}
     }
 
-    fun onSubmit(mainOnSubmit: (AESKey) -> Unit) {
+    fun onSubmit(mainOnSubmit: (RSAKeyPair) -> Unit) {
         if (_uiState.value.nameExists || name.isEmpty() || _uiState.value.valueInvalid)
             return
 
-        val secret =
-            if (_uiState.value.generateChecked) Cryptography.generateAESKey()
-            else Converter.toSecretKey(Converter.decode(value))
+        val genKey =
+            if (_uiState.value.generateChecked) Cryptography.generateRSAKey()
+            else null
 
-        val key = AESKey(
+        val public =
+            if (_uiState.value.generateChecked) genKey!!.public
+            else Converter.toPublicKey(publicVal)
+        val private =
+            if (_uiState.value.generateChecked) genKey!!.private
+            else Converter.toPrivateKey(privateVal)
+
+        val key = RSAKeyPair(
             name = name,
-            secret = secret
+            key = MyKeyPair(public, private)
         )
 
         repo.storeKey(key)
@@ -72,5 +77,5 @@ class AESKeyGenVM @Inject constructor(
 
         mainOnSubmit(key)
     }
-	
+
 }

@@ -1,6 +1,8 @@
 package bassamalim.ser.core.models
 
-data class RSAKeyPair(
-    val name: String,
+import bassamalim.ser.core.enums.Algorithm
+
+class RSAKeyPair(
+    name: String,
     val key: MyKeyPair,
-)
+): Key(name, key, Algorithm.RSA)

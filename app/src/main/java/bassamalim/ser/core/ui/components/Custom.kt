@@ -2,7 +2,6 @@ package bassamalim.ser.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -108,7 +107,7 @@ fun SaveKeyDialog(
             DialogTitle(R.string.save_key)
 
             MyOutlinedTextField(
-                hint = stringResource(R.string.key_name),
+                label = stringResource(R.string.key_name),
                 onValueChange = {
                     text = it
                     onTextChange(it)
@@ -140,46 +139,6 @@ fun SaveKeyDialog(
                     onClick = { onSubmit(text) }
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun KeyPickerDialog(
-    shown: Boolean,
-    keyNames: List<String>,
-    onKeySelected: (Int) -> Unit,
-    onCancel: () -> Unit
-) {
-    MyDialog(
-        shown = shown,
-        onDismiss = onCancel
-    ) {
-        MyColumn(
-            Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
-        ) {
-            DialogTitle(textResId = R.string.pick_key)
-
-            MyLazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 30.dp),
-                lazyList = {
-                    itemsIndexed(keyNames) { i, keyName ->
-                        MyClickableText(
-                            text = keyName,
-                            onClick = { onKeySelected(i) }
-                        )
-
-                        if (i != keyNames.lastIndex) MyHorizontalDivider()
-                    }
-                }
-            )
-
-            SecondaryPillBtn(
-                text = stringResource(R.string.cancel),
-                onClick = onCancel
-            )
         }
     }
 }

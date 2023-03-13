@@ -20,10 +20,11 @@ import bassamalim.ser.core.ui.theme.AppTheme
 
 @Composable
 fun MyDropDownMenu(
-    selectedIndex: Int,
-    items: Array<String>,
+    initialSelectedIndex: Int = 0,
+    items: List<String>,
     onChoice: (Int) -> Unit
 ) {
+    var selectedIndex by remember { mutableStateOf(initialSelectedIndex) }
     var expanded by remember { mutableStateOf(false) }
 
     Box(
@@ -58,7 +59,9 @@ fun MyDropDownMenu(
                 items.forEachIndexed { index, name ->
                     DropdownMenuItem(
                         onClick = {
+                            selectedIndex = index
                             expanded = false
+
                             onChoice(index)
                         }
                     ) {

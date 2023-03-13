@@ -16,13 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 class RSAVM @Inject constructor(
     private val app: Application,
-    private val repo: RSARepo
+    repo: RSARepo
 ): AndroidViewModel(app) {
 
     private var text = ""
     private var keyPair = repo.getKey(Prefs.SelectedRSAKeyName.default as String)
-    var keyNames = repo.getKeyNames()
-        private set
 
     private val _uiState = MutableStateFlow(RSAState())
     val uiState = _uiState.asStateFlow()
@@ -57,12 +55,8 @@ class RSAVM @Inject constructor(
         )}
     }
 
-    fun onKeySelected(idx: Int) {
-        val name = keyNames[idx]
-
-        repo.setSelectedKey(name)
-
-        keyPair = repo.getKey(name)
+    fun onKeySelected(selectedKeyPair: RSAKeyPair) {
+        keyPair = selectedKeyPair
 
         _uiState.update { it.copy(
             keyName = keyPair.name,
@@ -84,21 +78,8 @@ class RSAVM @Inject constructor(
         )}
     }
 
-    fun onNewKeyDlgNameCh(name: String) {
-        _uiState.update { it.copy(
-            nameAlreadyExists = keyNames.any { n -> n == name }
-        )}
-    }
-
-    fun onSaveDlgSubmit(name: String) {
-        if (uiState.value.nameAlreadyExists) return
-
-        val newKey = Cryptography.generateRSAKey()
-        keyPair = RSAKeyPair(name, newKey)
-
-        repo.storeKey(keyPair)
-
-        repo.setSelectedKey(name)
+    fun onNewKeyDlgSubmit(newKeyPair: RSAKeyPair) {
+        keyPair = newKeyPair
 
         _uiState.update { it.copy(
             keyName = keyPair.name,
@@ -106,19 +87,12 @@ class RSAVM @Inject constructor(
             privateKey = keyPair.key.privateAsString(),
             newKeyDialogShown = false
         )}
-
-        keyNames = repo.getKeyNames()
     }
 
     fun onNewKeyDlgCancel() {
         _uiState.update { it.copy(
-            newKeyDialogShown = false,
-            nameAlreadyExists = false
+            newKeyDialogShown = false
         )}
-    }
-
-    fun onImportKey() {
-        // TODO
     }
 
     fun onOpSwitch(isDecrypt: Boolean) {

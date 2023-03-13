@@ -1,24 +1,23 @@
 package bassamalim.ser.features.keyStore
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import bassamalim.ser.R
 import bassamalim.ser.core.models.StoreKey
 import bassamalim.ser.core.ui.components.*
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import bassamalim.ser.features.keyPublisher.KeyPublisherDlg
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun KeyStoreUI(
-    nc: NavController = rememberAnimatedNavController(),
     vm: KeyStoreVM = hiltViewModel()
 ) {
     val st by vm.uiState.collectAsState()
@@ -36,20 +35,24 @@ fun KeyStoreUI(
         }
         else {
             MyColumn {
-                MyRow {
-                    if (st.keyPublished) {
-                        SecondaryPillBtn(
-                            text = stringResource(R.string.remove_my_key),
-                            textColor = bassamalim.ser.core.ui.theme.Negative,
-                            onClick = vm::onRemoveKey
-                        )
-                    }
-                    else {
-                        SecondaryPillBtn(
-                            text = stringResource(R.string.publish_key),
-                            onClick = vm::onPublishKey
-                        )
-                    }
+                if (st.keyPublished) {
+                    MyText(
+                        "Published key:\n" +
+                                "Owner name: ${st.userName}\n" +
+                                "Key name: ${st.publishedKeyName}"
+                    )
+
+                    SecondaryPillBtn(
+                        text = stringResource(R.string.remove_my_key),
+                        textColor = bassamalim.ser.core.ui.theme.Negative,
+                        onClick = vm::onRemoveKey
+                    )
+                }
+                else {
+                    SecondaryPillBtn(
+                        text = stringResource(R.string.publish_my_key),
+                        onClick = vm::onPublishKey
+                    )
                 }
 
                 MyHorizontalDivider(thickness = 2.dp)
@@ -68,6 +71,14 @@ fun KeyStoreUI(
             }
         }
     }
+
+    KeyPublisherDlg(
+        shown = st.keyPublisherShown,
+        onCancel = vm::onKeyPublisherCancel,
+        mainOnSubmit = { userName, keyName ->
+            vm.onKeyPublisherSubmit(userName, keyName)
+        }
+    )
 }
 
 @Composable

@@ -22,4 +22,7 @@ interface AESDao {
     @Query("DELETE FROM aes_keys WHERE name = :name")
     fun delete(name: String)
 
+    @Query("UPDATE aes_keys SET name = :newName WHERE name = :oldName")
+    fun rename(oldName: String, newName: String)
+
 }
