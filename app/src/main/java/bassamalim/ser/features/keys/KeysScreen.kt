@@ -1,29 +1,19 @@
 package bassamalim.ser.features.keys
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import bassamalim.ser.R
@@ -75,7 +65,6 @@ fun KeysUI(
                     itemsIndexed(st.aesKeys) { i, key ->
                         AESExpandableItem(
                             vm = vm,
-                            st = st,
                             key = key,
                             idx = i
                         )
@@ -312,57 +301,12 @@ fun RSAKeyAddDialog(
 @Composable
 fun AESExpandableItem(
     vm: KeysVM,
-    st: KeysState,
     key: AESKey,
     idx: Int
 ) {
-    var expandedState by remember { mutableStateOf(false) }
-    val rotationState by animateFloatAsState(if (expandedState) 180f else 0f)
-
-    MyColumn(
-        modifier = Modifier
-            .animateContentSize(
-                animationSpec = TweenSpec(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-            .clickable { expandedState = !expandedState }
-    ) {
-        MyRow(
-            Modifier.padding(all = 16.dp)
-        ) {
-            MyText(
-                key.name,
-                Modifier.weight(1f),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start
-            )
-
-            if (key.name == st.primaryAESKeyName) {
-                Box(
-                    modifier = Modifier.padding(end = 14.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(bassamalim.ser.core.ui.theme.Positive)
-                    )
-                }
-            }
-
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = stringResource(R.string.select),
-                tint = AppTheme.colors.text,
-                modifier = Modifier.rotate(rotationState)
-            )
-        }
-
-        // expanded content
-        if (expandedState) {
+    ExpandableItem(
+        title = key.name,
+        expandedContent = {
             MyColumn {
                 KeySpace(
                     titleResId = R.string.key,
@@ -373,29 +317,20 @@ fun AESExpandableItem(
                 MyRow {
                     MyClickableText(
                         text = stringResource(R.string.rename),
+                        isEnabled = idx != 0,
                         onClick = { vm.onAESKeyRename(idx) }
                     )
 
                     MyClickableText(
                         text = stringResource(R.string.remove),
                         textColor = bassamalim.ser.core.ui.theme.Negative,
-                        isEnabled = key.name != st.primaryAESKeyName,
+                        isEnabled = idx != 0,
                         onClick = { vm.onAESKeyRemove(idx) }
-                    )
-
-                    MyClickableText(
-                        text = stringResource(
-                            if (key.name == st.primaryAESKeyName) R.string.primary
-                            else R.string.set_primary
-                        ),
-                        onClick = { vm.onAESKeySetPrimary(idx) }
                     )
                 }
             }
         }
-    }
-
-    MyHorizontalDivider()
+    )
 }
 
 @Composable
@@ -405,31 +340,10 @@ fun RSAExpandableItem(
     keyPair: RSAKeyPair,
     idx: Int
 ) {
-    var expandedState by remember { mutableStateOf(false) }
-    val rotationState by animateFloatAsState(if (expandedState) 180f else 0f)
-
-    MyColumn(
-        modifier = Modifier
-            .animateContentSize(
-                animationSpec = TweenSpec(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-            .clickable { expandedState = !expandedState }
-    ) {
-        MyRow(
-            Modifier.padding(all = 16.dp)
-        ) {
-            MyText(
-                keyPair.name,
-                Modifier.weight(1f),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start
-            )
-
-            if (keyPair.name == st.primaryRSAKeyName) {
+    ExpandableItem(
+        title = keyPair.name,
+        extraVisible = {
+            if (keyPair.key.publicAsString() == st.publishedKeyValue) {
                 Box(
                     modifier = Modifier.padding(end = 14.dp)
                 ) {
@@ -441,17 +355,8 @@ fun RSAExpandableItem(
                     )
                 }
             }
-
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = stringResource(R.string.select),
-                tint = AppTheme.colors.text,
-                modifier = Modifier.rotate(rotationState)
-            )
-        }
-
-        // expanded content
-        if (expandedState) {
+        },
+        expandedContent = {
             MyColumn {
                 KeySpace(
                     titleResId = R.string.public_key,
@@ -468,27 +373,19 @@ fun RSAExpandableItem(
                 MyRow {
                     MyClickableText(
                         text = stringResource(R.string.rename),
+                        isEnabled = idx != 0,
                         onClick = { vm.onRSAKeyRename(idx) }
                     )
 
                     MyClickableText(
                         text = stringResource(R.string.remove),
                         textColor = bassamalim.ser.core.ui.theme.Negative,
-                        isEnabled = keyPair.name != st.primaryRSAKeyName,
+                        isEnabled = idx != 0 &&
+                                keyPair.key.publicAsString() != st.publishedKeyValue,
                         onClick = { vm.onRSAKeyRemove(idx) }
-                    )
-
-                    MyClickableText(
-                        text = stringResource(
-                            if (keyPair.name == st.primaryRSAKeyName) R.string.primary
-                            else R.string.set_primary
-                        ),
-                        onClick = { vm.onRSAKeySetPrimary(idx) }
                     )
                 }
             }
         }
-    }
-
-    MyHorizontalDivider()
+    )
 }

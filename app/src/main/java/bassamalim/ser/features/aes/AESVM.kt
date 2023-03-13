@@ -74,22 +74,8 @@ class AESVM @Inject constructor(
         )}
     }
 
-    fun onNewKeyDlgNameCh(name: String) {
-        _uiState.update { it.copy(
-            nameAlreadyExists = keyNames.any { n -> n == name }
-        )}
-    }
-
-    fun onNewKeyDlgSubmit(name: String) {
-        if (uiState.value.nameAlreadyExists) return
-
-        val secret = Cryptography.generateAESKey()
-        key = AESKey(
-            name = name,
-            secret = secret
-        )
-
-        repo.storeKey(key)
+    fun onNewKeyDlgSubmit(key: AESKey) {
+        this.key = key
 
         _uiState.update { it.copy(
             keyName = key.name,
@@ -97,15 +83,12 @@ class AESVM @Inject constructor(
             newKeyDialogShown = false
         )}
 
-        repo.setSelectedKey(name)
-
         keyNames = repo.getKeyNames()
     }
 
     fun onNewKeyDlgCancel() {
         _uiState.update { it.copy(
-            newKeyDialogShown = false,
-            nameAlreadyExists = false
+            newKeyDialogShown = false
         )}
     }
 

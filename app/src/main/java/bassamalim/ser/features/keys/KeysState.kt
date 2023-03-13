@@ -6,8 +6,7 @@ import bassamalim.ser.core.models.RSAKeyPair
 data class KeysState(
     val aesKeys: List<AESKey> = emptyList(),
     val rsaKeys: List<RSAKeyPair> = emptyList(),
-    val primaryAESKeyName: String = "",
-    val primaryRSAKeyName: String = "",
+    val publishedKeyValue: String = "",
     val aesKeyAddDialogShown: Boolean = false,
     val rsaKeyAddDialogShown: Boolean = false,
     val aesNameAlreadyExists: Boolean = false,

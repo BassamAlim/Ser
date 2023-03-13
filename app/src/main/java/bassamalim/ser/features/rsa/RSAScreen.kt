@@ -1,19 +1,14 @@
 package bassamalim.ser.features.rsa
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.stringResource
@@ -140,88 +135,45 @@ fun RSAUI(
 @Composable
 fun RSAKeyCard(
     st: RSAState,
-    modifier: Modifier = Modifier,
     onCopyPublicKey: () -> Unit,
     onCopyPrivateKey: () -> Unit,
     onSelectKey: () -> Unit,
     onNewKey: () -> Unit,
     onImportKey: () -> Unit
 ) {
-    var expandedState by remember { mutableStateOf(false) }
-    val rotationState by animateFloatAsState(if (expandedState) 180f else 0f)
+    ExpandableCard(
+        title = "${stringResource(R.string.key_pair)}: ${st.keyName}",
+        expandedContent = {
+            KeySpace(
+                titleResId = R.string.public_key,
+                keyValue = st.publicKey,
+                onCopy = onCopyPublicKey
+            )
 
-    MyClickableSurface(
-        modifier = modifier
-            .animateContentSize(
-                animationSpec = TweenSpec(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                )
-            ),
-        color = AppTheme.colors.primary,
-        onClick = { expandedState = !expandedState }
-    ) {
-        MyFatColumn {
-            MyRow(
-                arrangement = Arrangement.SpaceBetween,
-                padding = PaddingValues(start = 6.dp, end = 12.dp)
-            ) {
-                MyText(
-                    text = "${stringResource(R.string.key_pair)}: ${st.keyName}",
-                    fontSize = 22.sp,
-                    textAlign = TextAlign.Start,
-                    textColor = AppTheme.colors.strongText,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
-                )
+            KeySpace(
+                titleResId = R.string.private_key,
+                keyValue = st.privateKey,
+                onCopy = onCopyPrivateKey
+            )
 
-                Box(
-                    modifier = Modifier.padding(start = 20.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = stringResource(R.string.select),
-                        tint = AppTheme.colors.text,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .rotate(rotationState)
-                    )
-                }
-            }
+            SecondaryPillBtn(
+                text = stringResource(R.string.select_keypair),
+                textColor = AppTheme.colors.text,
+                onClick = onSelectKey
+            )
 
-            if (expandedState) {
-                KeySpace(
-                    titleResId = R.string.public_key,
-                    keyValue = st.publicKey,
-                    onCopy = onCopyPublicKey
-                )
+            SecondaryPillBtn(
+                text = stringResource( R.string.generate),
+                textColor = AppTheme.colors.text,
+                onClick = onNewKey
+            )
 
-                KeySpace(
-                    titleResId = R.string.private_key,
-                    keyValue = st.privateKey,
-                    onCopy = onCopyPrivateKey
-                )
-
-                SecondaryPillBtn(
-                    text = stringResource(R.string.select_keypair),
-                    textColor = AppTheme.colors.text,
-                    onClick = onSelectKey
-                )
-
-                SecondaryPillBtn(
-                    text = stringResource( R.string.generate_new_keypair),
-                    textColor = AppTheme.colors.text,
-                    onClick = onNewKey
-                )
-
-                SecondaryPillBtn(
-                    text = stringResource(R.string.import_keypair),
-                    textColor = AppTheme.colors.text,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    onClick = onImportKey
-                )
-            }
+            SecondaryPillBtn(
+                text = stringResource(R.string.import_keypair),
+                textColor = AppTheme.colors.text,
+                modifier = Modifier.padding(bottom = 10.dp),
+                onClick = onImportKey
+            )
         }
-    }
+    )
 }

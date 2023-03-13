@@ -9,6 +9,7 @@ import bassamalim.ser.core.data.database.AppDatabase
 import bassamalim.ser.core.helpers.KeyKeeper
 import bassamalim.ser.features.about.AboutRepo
 import bassamalim.ser.features.aes.AESRepo
+import bassamalim.ser.features.aesKeyGen.AESKeyGenRepo
 import bassamalim.ser.features.home.HomeRepo
 import bassamalim.ser.features.keyStore.KeyStoreRepo
 import bassamalim.ser.features.keys.KeysRepo
@@ -92,8 +93,10 @@ object AppModule {
 
     @Provides @Singleton
     fun provideKeyStoreRepository(
-        firestore: FirebaseFirestore
-    ) = KeyStoreRepo(firestore)
+        sharedPreferences: SharedPreferences,
+        firestore: FirebaseFirestore,
+        keyKeeper: KeyKeeper
+    ) = KeyStoreRepo(sharedPreferences, firestore, keyKeeper)
 
     @Provides @Singleton
     fun provideMainRepository(
@@ -107,5 +110,12 @@ object AppModule {
         database: AppDatabase,
         keyKeeper: KeyKeeper
     ) = RSARepo(sharedPreferences, database, keyKeeper)
+
+    @Provides @Singleton
+    fun provideAESKeyGenRepository(
+        sharedPreferences: SharedPreferences,
+        database: AppDatabase,
+        keyKeeper: KeyKeeper
+    ) = AESKeyGenRepo(sharedPreferences, database, keyKeeper)
 
 }

@@ -1,19 +1,14 @@
 package bassamalim.ser.features.aes
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.stringResource
@@ -25,6 +20,7 @@ import bassamalim.ser.R
 import bassamalim.ser.core.enums.Operation
 import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
+import bassamalim.ser.features.aesKeyGen.AESKeyGenUI
 import kotlinx.coroutines.launch
 
 @Composable
@@ -125,94 +121,57 @@ fun AESUI(
             onKeySelected = { vm.onKeySelected(it) },
         )
 
-        SaveKeyDialog(
+        AESKeyGenUI(
+            shown = st.newKeyDialogShown,
+            onCancel = vm::onNewKeyDlgCancel,
+            onSubmit = { vm.onNewKeyDlgSubmit(it) }
+        )
+
+        /*SaveKeyDialog(
             st.newKeyDialogShown,
             st.nameAlreadyExists,
             onTextChange = { vm.onNewKeyDlgNameCh(it) },
             onSubmit = { vm.onNewKeyDlgSubmit(it) },
             onCancel = vm::onNewKeyDlgCancel
-        )
+        )*/
     }
 }
 
 @Composable
 fun AESKeyCard(
     st: AESState,
-    modifier: Modifier = Modifier,
     onCopyKey: () -> Unit,
     onSelectKey: () -> Unit,
     onNewKey: () -> Unit,
     onImportKey: () -> Unit
 ) {
-    var expandedState by remember { mutableStateOf(false) }
-    val rotationState by animateFloatAsState(if (expandedState) 180f else 0f)
+    ExpandableCard(
+        title = "${stringResource(R.string.key)}: ${st.keyName}",
+        expandedContent = {
+            KeySpace(
+                titleResId = R.string.key,
+                keyValue = st.secretKey,
+                onCopy = onCopyKey
+            )
 
-    MyClickableSurface(
-        modifier = modifier
-            .animateContentSize(
-                animationSpec = TweenSpec(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                )
-            ),
-        color = AppTheme.colors.primary,
-        onClick = { expandedState = !expandedState }
-    ) {
-        MyFatColumn {
-            MyRow(
-                arrangement = Arrangement.SpaceBetween,
-                padding = PaddingValues(start = 6.dp, end = 12.dp)
-            ) {
-                MyText(
-                    text = "${stringResource(R.string.key)}: ${st.keyName}",
-                    fontSize = 22.sp,
-                    textAlign = TextAlign.Start,
-                    textColor = AppTheme.colors.strongText,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(top = 10.dp, bottom = 10.dp, start = 16.dp)
-                )
+            SecondaryPillBtn(
+                text = stringResource(R.string.select_key),
+                textColor = AppTheme.colors.text,
+                onClick = onSelectKey
+            )
 
-                Box(
-                    modifier = Modifier.padding(start = 20.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = stringResource(R.string.select),
-                        tint = AppTheme.colors.text,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .rotate(rotationState)
-                    )
-                }
-            }
+            SecondaryPillBtn(
+                text = stringResource(R.string.generate_new_key),
+                textColor = AppTheme.colors.text,
+                onClick = onNewKey
+            )
 
-            if (expandedState) {
-                KeySpace(
-                    titleResId = R.string.key,
-                    keyValue = st.secretKey,
-                    onCopy = onCopyKey
-                )
-
-                SecondaryPillBtn(
-                    text = stringResource(R.string.select_key),
-                    textColor = AppTheme.colors.text,
-                    onClick = onSelectKey
-                )
-
-                SecondaryPillBtn(
-                    text = stringResource(R.string.generate_new_key),
-                    textColor = AppTheme.colors.text,
-                    onClick = onNewKey
-                )
-
-                SecondaryPillBtn(
-                    text = stringResource(R.string.import_key),
-                    textColor = AppTheme.colors.text,
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    onClick = onImportKey
-                )
-            }
+            SecondaryPillBtn(
+                text = stringResource(R.string.import_key),
+                textColor = AppTheme.colors.text,
+                modifier = Modifier.padding(bottom = 10.dp),
+                onClick = onImportKey
+            )
         }
-    }
+    )
 }

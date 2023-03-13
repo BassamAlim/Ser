@@ -170,13 +170,19 @@ fun MyOutlinedTextField(
         label = {
             MyText(text = hint)
         },
+        enabled = isEnabled,
         shape = RoundedCornerShape(15.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = AppTheme.colors.strongText,
+            cursorColor = AppTheme.colors.accent,
             focusedBorderColor = AppTheme.colors.strongText,
             unfocusedBorderColor = AppTheme.colors.text,
-            textColor = AppTheme.colors.strongText,
-            disabledLabelColor = AppTheme.colors.weakText,
-            cursorColor = AppTheme.colors.accent
+            disabledTextColor = bassamalim.ser.core.ui.theme.Grey,
+            disabledLabelColor = bassamalim.ser.core.ui.theme.Grey,
+            disabledBorderColor = bassamalim.ser.core.ui.theme.Grey,
+            disabledPlaceholderColor = bassamalim.ser.core.ui.theme.Grey,
+            disabledLeadingIconColor = bassamalim.ser.core.ui.theme.Grey,
+            disabledTrailingIconColor = bassamalim.ser.core.ui.theme.Grey,
         ),
         trailingIcon = {
             if (textState.isNotEmpty() && isEnabled) {

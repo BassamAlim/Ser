@@ -21,19 +21,7 @@ class KeysRepo @Inject constructor(
 
     fun getRSAKeys(): List<RSAKeyPair> = keyKeeper.getAllRSA()
 
-    fun getPrimaryAESKeyName() = PrefUtils.getString(sp, Prefs.PrimaryAESKeyName)
-    fun setPrimaryAESKeyName(name: String) {
-        sp.edit()
-            .putString(Prefs.PrimaryAESKeyName.key, name)
-            .apply()
-    }
-
-    fun getPrimaryRSAKeyName() = PrefUtils.getString(sp, Prefs.PrimaryRSAKeyName)
-    fun setPrimaryRSAKeyName(name: String) {
-        sp.edit()
-            .putString(Prefs.PrimaryRSAKeyName.key, name)
-            .apply()
-    }
+    fun getPublishedKeyValue() = PrefUtils.getString(sp, Prefs.PublishedKeyValue)
 
     fun insertAESKey(name: String, key: String) {
         val keyObj = AESKey(

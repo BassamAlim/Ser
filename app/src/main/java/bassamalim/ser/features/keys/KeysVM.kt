@@ -28,8 +28,7 @@ class KeysVM @Inject constructor(
         _uiState.update { it.copy(
             aesKeys = repo.getAESKeys(),
             rsaKeys = repo.getRSAKeys(),
-            primaryAESKeyName = repo.getPrimaryAESKeyName(),
-            primaryRSAKeyName = repo.getPrimaryRSAKeyName()
+            publishedKeyValue = repo.getPublishedKeyValue()
         )}
     }
 
@@ -102,13 +101,6 @@ class KeysVM @Inject constructor(
 
     fun onAESKeyRename(idx: Int) {
 
-    }
-
-    fun onAESKeySetPrimary(idx: Int) {
-        repo.setPrimaryAESKeyName(aesKeyNames[idx])
-        _uiState.update { it.copy(
-            primaryAESKeyName = repo.getPrimaryAESKeyName()
-        )}
     }
 
 
@@ -186,13 +178,6 @@ class KeysVM @Inject constructor(
 
     fun onRSAKeyRename(idx: Int) {
 
-    }
-
-    fun onRSAKeySetPrimary(idx: Int) {
-        repo.setPrimaryRSAKeyName(rsaKeyNames[idx])
-        _uiState.update { it.copy(
-            primaryRSAKeyName = repo.getPrimaryRSAKeyName()
-        )}
     }
 
 }
