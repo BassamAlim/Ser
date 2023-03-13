@@ -152,7 +152,8 @@ class KeysVM @Inject constructor(
             aesKeyNames = repo.getAESKeyNames()
 
             _uiState.update { it.copy(
-                aesKeys = repo.getAESKeys()
+                aesKeys = repo.getAESKeys(),
+                keyRenameDialogShown = false
             )}
         }
         else {
@@ -160,7 +161,8 @@ class KeysVM @Inject constructor(
 
             _uiState.update { it.copy(
                 rsaKeys = repo.getRSAKeys(),
-                publishedKeyName = repo.getPublishedKeyName()
+                publishedKeyName = repo.getPublishedKeyName(),
+                keyRenameDialogShown = false
             )}
         }
     }

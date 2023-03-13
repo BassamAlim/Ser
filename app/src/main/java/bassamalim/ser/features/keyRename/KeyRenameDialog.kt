@@ -45,7 +45,7 @@ fun KeyRenameDlg(
 
             MyColumn(
                 modifier = Modifier
-                    .height(260.dp)
+                    .height(160.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 MyOutlinedTextField(
