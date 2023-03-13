@@ -226,13 +226,14 @@
     <string name="copy">Copy</string>
     <string name="empty_string" />
     <string name="key">Key</string>
+    <string name="aes">AES</string>
+    <string name="rsa">RSA</string>
     <string name="key_is">Key:</string>
     <string name="keys">Keys</string>
     <string name="aes_key">AES key</string>
     <string name="aes_keys">AES keys</string>
     <string name="rsa_key">RSA key</string>
     <string name="rsa_keys">RSA keys</string>
-    <string name="public_key_repo">Public key repository</string>
     <string name="save_key">Save key</string>
     <string name="key_name">Key name</string>
     <string name="new_name">New name</string>
@@ -251,7 +252,7 @@
     <string name="select_keypair">Select key pair</string>
     <string name="new_key">New key</string>
     <string name="new_aes_key">New AES key</string>
-    <string name="new_rsa_key">New RSA key</string>
+    <string name="new_rsa_key">New RSA key pair</string>
     <string name="new_keypair">New key pair</string>
     <string name="rename_key">Rename key</string>
     <string name="rename_keypair">Rename key pair</string>
@@ -269,5 +270,7 @@
     <string name="publish_key">Publish Key</string>
     <string name="publish_my_key">Publish a public key</string>
     <string name="remove_my_key">Remove my public key</string>
+    <string name="aes_description">AES is a symmetric block cipher that can encrypt and decrypt information. It is a fast and secure algorithm. It is used to encrypt and decrypt files and messages.</string>
+    <string name="rsa_description">RSA is an asymmetric algorithm that uses a public key and a private key. The public key is used to encrypt information and the private key is used to decrypt the information. It is a slow algorithm but it is secure.</string>
 
 </resources>

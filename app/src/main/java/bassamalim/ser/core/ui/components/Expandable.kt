@@ -23,6 +23,7 @@ import bassamalim.ser.core.ui.theme.AppTheme
 @Composable
 fun ExpandableCard(
     title: String,
+    modifier: Modifier = Modifier,
     extraVisible: @Composable () -> Unit = {},
     expandedContent: @Composable () -> Unit
 ) {
@@ -30,7 +31,7 @@ fun ExpandableCard(
     val rotationState by animateFloatAsState(if (expandedState) 180f else 0f)
 
     MyClickableSurface(
-        modifier = Modifier
+        modifier = modifier
             .animateContentSize(
                 animationSpec = TweenSpec(
                     durationMillis = 300,

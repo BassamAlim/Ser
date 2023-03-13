@@ -47,24 +47,25 @@ fun MoreUI(
             }
 
             MySquareButton(
-                textResId = R.string.share_app,
-                imageResId = R.drawable.ic_share
-            ) {
-                vm.shareApp(ctx)
-            }
-        }
-
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            MySquareButton(
                 textResId = R.string.about,
                 imageResId = R.drawable.ic_info
             ) {
                 vm.gotoAbout(nc)
             }
         }
+
+        // TODO: enable after publishing
+        /*Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            MySquareButton(
+                textResId = R.string.share_app,
+                imageResId = R.drawable.ic_share
+            ) {
+                vm.shareApp(ctx)
+            }
+        }*/
     }
 
     if (st.value.shouldShowUnsupported) {

@@ -1,9 +1,6 @@
 package bassamalim.ser.features.rsa
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -42,9 +39,7 @@ fun RSAUI(
 
     MyParentColumn(
         scroll = false,
-        modifier = Modifier
-            .padding(top = 6.dp)
-            .verticalScroll(scrollState)
+        modifier = Modifier.verticalScroll(scrollState)
     ) {
         RSAKeyCard(
             st = st,
@@ -77,6 +72,7 @@ fun RSAUI(
                 if (st.operation == Operation.ENCRYPT) R.string.encrypt
                 else R.string.decrypt
             ),
+            padding = PaddingValues(vertical = 20.dp),
             onClick = vm::onExecute
         )
 
@@ -143,6 +139,7 @@ fun RSAKeyCard(
 ) {
     ExpandableCard(
         title = "${stringResource(R.string.key_pair)}: ${st.keyName}",
+        modifier = Modifier.padding(vertical = 12.dp),
         expandedContent = {
             KeySpace(
                 titleResId = R.string.public_key,

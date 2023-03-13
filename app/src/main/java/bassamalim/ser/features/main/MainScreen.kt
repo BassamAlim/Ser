@@ -21,8 +21,8 @@ import bassamalim.ser.core.ui.theme.AppTheme
 import bassamalim.ser.features.aes.AESUI
 import bassamalim.ser.features.home.HomeUI
 import bassamalim.ser.features.keys.KeysUI
-import bassamalim.ser.features.rsa.RSAUI
 import bassamalim.ser.features.more.MoreUI
+import bassamalim.ser.features.rsa.RSAUI
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -76,10 +76,7 @@ fun NavigationGraph(
             popEnterTransition = TabPopEnter,
             popExitTransition = TabPopExit
         ) {
-            HomeUI(
-                nc = navController,
-                vm = hiltViewModel()
-            )
+            HomeUI()
         }
 
         composable(

@@ -38,7 +38,7 @@ fun KeysUI(
     }
 
     MyColumn {
-        PrimaryPillBtn(text = stringResource(R.string.public_key_repo)) {
+        PrimaryPillBtn(text = stringResource(R.string.public_key_store)) {
             vm.onPublicKeyStore(nc)
         }
 

@@ -10,7 +10,6 @@ import bassamalim.ser.core.helpers.KeyKeeper
 import bassamalim.ser.features.about.AboutRepo
 import bassamalim.ser.features.aes.AESRepo
 import bassamalim.ser.features.aesKeyGen.AESKeyGenRepo
-import bassamalim.ser.features.home.HomeRepo
 import bassamalim.ser.features.keyPicker.KeyPickerRepo
 import bassamalim.ser.features.keyPublisher.KeyPublisherRepo
 import bassamalim.ser.features.keyRename.KeyRenameRepo
@@ -79,12 +78,6 @@ object AppModule {
     fun provideAESRepository(
         keyKeeper: KeyKeeper
     ) = AESRepo(keyKeeper)
-
-    @Provides @Singleton
-    fun provideHomeRepository(
-        resources: Resources,
-        preferences: SharedPreferences
-    ) = HomeRepo(resources, preferences)
 
     @Provides @Singleton
     fun provideKeysRepository(

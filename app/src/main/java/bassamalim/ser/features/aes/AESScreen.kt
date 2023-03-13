@@ -1,9 +1,6 @@
 package bassamalim.ser.features.aes
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -42,9 +39,7 @@ fun AESUI(
 
     MyParentColumn(
         scroll = false,
-        modifier = Modifier
-            .padding(top = 6.dp)
-            .verticalScroll(scrollState)
+        modifier = Modifier.verticalScroll(scrollState)
     ) {
         AESKeyCard(
             st = st,
@@ -75,6 +70,7 @@ fun AESUI(
             text =
                 if (st.operation == Operation.ENCRYPT) stringResource(R.string.encrypt)
                 else stringResource(R.string.decrypt),
+            padding = PaddingValues(vertical = 20.dp),
             onClick = vm::onExecute
         )
 
@@ -140,6 +136,7 @@ fun AESKeyCard(
 ) {
     ExpandableCard(
         title = "${stringResource(R.string.key)}: ${st.keyName}",
+        modifier = Modifier.padding(vertical = 12.dp),
         expandedContent = {
             KeySpace(
                 titleResId = R.string.key,

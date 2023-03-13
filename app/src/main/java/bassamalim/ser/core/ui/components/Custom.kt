@@ -26,12 +26,13 @@ fun TwoWaySwitch(
     isRight: Boolean,
     leftText: String,
     rightText: String,
+    modifier: Modifier = Modifier,
     onSwitch: (Boolean) -> Unit
 ) {
     var state by remember { mutableStateOf(isRight) }
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
