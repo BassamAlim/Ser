@@ -120,8 +120,9 @@ object AppModule {
     @Provides @Singleton
     fun provideKeyPickerRepository(
         sharedPreferences: SharedPreferences,
+        firestore: FirebaseFirestore,
         keyKeeper: KeyKeeper
-    ) = KeyPickerRepo(sharedPreferences, keyKeeper)
+    ) = KeyPickerRepo(sharedPreferences, firestore, keyKeeper)
 
     @Provides @Singleton
     fun provideKeyPublisherRepository(

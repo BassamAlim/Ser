@@ -5,7 +5,9 @@ import bassamalim.ser.core.data.Prefs
 import bassamalim.ser.core.data.database.AppDatabase
 import bassamalim.ser.core.helpers.KeyKeeper
 import bassamalim.ser.core.models.StoreKey
+import bassamalim.ser.core.models.StoreKeyPojo
 import bassamalim.ser.core.utils.PrefUtils
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -38,10 +40,17 @@ class KeyPublisherRepo @Inject constructor(
         return exists
     }
 
-    suspend fun publishKey(key: StoreKey) {
+    suspend fun publishKey(key: StoreKey, deviceId: String) {
+        val pojo = StoreKeyPojo(
+            name = key.name,
+            value = key.public,
+            deviceId = deviceId,
+            published = Timestamp.now()
+        )
+
         firestore.collection("PublicKeys")
-            .document(key.deviceId)
-            .set(key)
+            .document(pojo.deviceId)
+            .set(pojo)
             .addOnSuccessListener {
                 println("DocumentSnapshot successfully written!")
             }

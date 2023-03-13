@@ -7,7 +7,7 @@ import javax.crypto.SecretKey
 class AESKey(
     name: String,
     val secret: SecretKey
-): Key(name, secret, Algorithm.AES) {
+): Key(name, Algorithm.AES) {
 
     fun asBytes(): ByteArray = secret.encoded
 

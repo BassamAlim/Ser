@@ -5,4 +5,4 @@ import bassamalim.ser.core.enums.Algorithm
 class RSAKeyPair(
     name: String,
     val key: MyKeyPair,
-): Key(name, key, Algorithm.RSA)
+): Key(name, Algorithm.RSA)

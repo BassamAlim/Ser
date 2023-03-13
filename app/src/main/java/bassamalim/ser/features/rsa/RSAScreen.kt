@@ -16,7 +16,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import bassamalim.ser.R
 import bassamalim.ser.core.enums.Algorithm
 import bassamalim.ser.core.enums.Operation
-import bassamalim.ser.core.models.RSAKeyPair
 import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
 import bassamalim.ser.features.keyPicker.KeyPickerDlg
@@ -45,8 +44,8 @@ fun RSAUI(
             st = st,
             onCopyPublicKey = vm::onCopyPublicKey,
             onCopyPrivateKey = vm::onCopyPrivateKey,
-            onSelectKey = vm::onSelectKey,
-            onNewKey = vm::onNewKey
+            onNewKey = vm::onNewKey,
+            onSelectKey = vm::onSelectKey
         )
 
         TwoWaySwitch(
@@ -117,8 +116,8 @@ fun RSAUI(
         KeyPickerDlg(
             shown = st.keyPickerShown,
             algorithm = Algorithm.RSA,
-            onCancel = vm::onKeyPickerCancel,
-            mainOnKeySelected = { vm.onKeySelected(it as RSAKeyPair) },
+            mainOnCancel = vm::onKeyPickerCancel,
+            mainOnKeySelected = { vm.onKeySelected(it) },
         )
 
         RSAKeyGenDlg(

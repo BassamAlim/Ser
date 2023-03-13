@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import bassamalim.ser.core.models.StoreKey
 import bassamalim.ser.core.utils.Utils
-import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,10 +54,9 @@ class KeyPublisherVM @Inject constructor(
             repo.publishKey(
                 StoreKey(
                     name = userName,
-                    value = key.key.publicAsString(),
-                    deviceId = deviceId,
-                    published = Timestamp.now()
-                )
+                    public = key.key.publicAsString()
+                ),
+                deviceId
             )
         }
 

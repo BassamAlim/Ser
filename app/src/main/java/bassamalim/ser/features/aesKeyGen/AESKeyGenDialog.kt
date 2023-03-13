@@ -54,16 +54,10 @@ fun AESKeyGenDlg(
                 }
 
                 MyColumn {
-                    MyRow(
-                        arrangement = Arrangement.Start
-                    ) {
-                        MyCheckbox(
-                            isChecked = st.generateChecked,
-                            onCheckedChange = { vm.onGenerateCheckChange(it) }
-                        )
-
-                        MyText(stringResource(R.string.generate))
-                    }
+                    MyCheckbox(
+                        text = stringResource(R.string.generate),
+                        onCheckedChange = { vm.onGenerateCheckChange(it) },
+                    )
 
                     MyOutlinedTextField(
                         label = stringResource(R.string.key_value),

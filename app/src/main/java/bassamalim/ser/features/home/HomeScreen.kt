@@ -25,7 +25,7 @@ fun HomeUI() {
 
         ExpandableCard(
             title = stringResource(R.string.rsa),
-            modifier = Modifier.padding(top = 6.dp),
+            modifier = Modifier.padding(top = 4.dp),
             innerPadding = PaddingValues(vertical = 10.dp),
             expandedContent = {
                 MyText(stringResource(R.string.rsa_description))

@@ -84,7 +84,7 @@ class KeyStoreVM @Inject constructor(
     fun onCopyKey(idx: Int) {
         Utils.copyToClipboard(
             app = app,
-            text = _uiState.value.items[idx].value,
+            text = _uiState.value.items[idx].public,
             label = "${_uiState.value.items[idx].name}'s RSA public key"
         )
     }

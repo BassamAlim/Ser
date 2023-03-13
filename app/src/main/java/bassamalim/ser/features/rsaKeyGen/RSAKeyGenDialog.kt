@@ -1,6 +1,5 @@
 package bassamalim.ser.features.rsaKeyGen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -57,16 +56,10 @@ fun RSAKeyGenDlg(
                 }
 
                 MyColumn {
-                    MyRow(
-                        arrangement = Arrangement.Start
-                    ) {
-                        MyCheckbox(
-                            isChecked = st.generateChecked,
-                            onCheckedChange = { vm.onGenerateCheckChange(it) }
-                        )
-
-                        MyText(stringResource(R.string.generate))
-                    }
+                    MyCheckbox(
+                        text = stringResource(R.string.generate),
+                        onCheckedChange = { vm.onGenerateCheckChange(it) },
+                    )
 
                     MyOutlinedTextField(
                         label = stringResource(R.string.public_key),

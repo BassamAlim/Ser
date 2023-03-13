@@ -1,12 +1,10 @@
 package bassamalim.ser.features.keyStore
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,21 +23,15 @@ fun KeyStoreUI(
     MyScaffold(
         title = stringResource(R.string.public_key_store)
     ) {
-        if (st.loading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                MyCircularProgressIndicator()
-            }
-        }
+        if (st.loading) Loading()
         else {
             MyColumn {
                 if (st.keyPublished) {
                     MyText(
                         "Published key:\n" +
                                 "Owner name: ${st.userName}\n" +
-                                "Key name: ${st.publishedKeyName}"
+                                "Key name: ${st.publishedKeyName}",
+                        modifier = Modifier.padding(top = 10.dp)
                     )
 
                     SecondaryPillBtn(
@@ -55,7 +47,7 @@ fun KeyStoreUI(
                     )
                 }
 
-                MyHorizontalDivider(thickness = 2.dp)
+                MyHorizontalDivider(thickness = 3.dp)
 
                 MyLazyColumn(
                     lazyList = {
@@ -92,7 +84,7 @@ fun KeyItem(
         expandedContent = {
             KeySpace(
                 titleResId = R.string.public_key,
-                keyValue = key.value,
+                keyValue = key.public,
                 onCopy = { vm.onCopyKey(idx) },
             )
         }

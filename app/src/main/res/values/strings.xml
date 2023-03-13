@@ -250,6 +250,7 @@
     <string name="keypair_name">Key pair name</string>
     <string name="pick_keypair">Pick a key pair</string>
     <string name="select_keypair">Select key pair</string>
+    <string name="from_key_store">From key store</string>
     <string name="new_key">New key</string>
     <string name="new_aes_key">New AES key</string>
     <string name="new_rsa_key">New RSA key pair</string>

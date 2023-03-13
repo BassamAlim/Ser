@@ -28,14 +28,7 @@ fun KeyPublisherDlg(
         shown = shown,
         onDismiss = onCancel
     ) {
-        if (st.loading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                MyCircularProgressIndicator()
-            }
-        }
+        if (st.loading) Loading()
         else {
             MyColumn(
                 Modifier.padding(vertical = 10.dp, horizontal = 20.dp)

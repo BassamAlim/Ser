@@ -1,10 +1,15 @@
 package bassamalim.ser.core.models
 
-import com.google.firebase.Timestamp
+import bassamalim.ser.core.enums.Algorithm
+import bassamalim.ser.core.utils.Converter
 
-data class StoreKey(
-    val name: String,
-    val value: String,
-    val deviceId: String,
-    val published: Timestamp
-)
+class StoreKey(
+    name: String,
+    val public: String
+): Key(name, Algorithm.RSA) {
+
+    fun asBytes(): ByteArray = Converter.decode(public)
+
+    fun asPublicKey() = Converter.toPublicKey(public)
+
+}

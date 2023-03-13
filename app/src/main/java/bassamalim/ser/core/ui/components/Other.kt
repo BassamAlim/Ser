@@ -2,27 +2,17 @@ package bassamalim.ser.core.ui.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import bassamalim.ser.core.ui.theme.AppTheme
 import bassamalim.ser.core.ui.theme.Grey
-
-@Composable
-fun MyCircularProgressIndicator(
-    modifier: Modifier = Modifier,
-    color: Color = AppTheme.colors.accent
-) {
-    CircularProgressIndicator(
-        color = color,
-        modifier = modifier
-    )
-}
 
 @Composable
 fun MyFloatingActionButton(
@@ -57,20 +47,5 @@ fun MyHorizontalDivider(
         modifier = modifier
             .alpha(0.6F)
             .padding(vertical = 5.dp)
-    )
-}
-
-@Composable
-fun MyCheckbox(
-    isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit = {}
-) {
-    Checkbox(
-        checked = isChecked,
-        onCheckedChange = { onCheckedChange(it) },
-        colors = CheckboxDefaults.colors(
-            checkedColor = AppTheme.colors.accent,
-            uncheckedColor = AppTheme.colors.text
-        )
     )
 }

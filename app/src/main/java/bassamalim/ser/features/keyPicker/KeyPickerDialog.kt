@@ -1,6 +1,7 @@
 package bassamalim.ser.features.keyPicker
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -20,7 +21,7 @@ fun KeyPickerDlg(
     shown: Boolean,
     algorithm: Algorithm,
     vm: KeyPickerVM = hiltViewModel(),
-    onCancel: () -> Unit,
+    mainOnCancel: () -> Unit,
     mainOnKeySelected: (Key) -> Unit,
 ) {
     val st by vm.uiState.collectAsState()
@@ -29,35 +30,51 @@ fun KeyPickerDlg(
 
     MyDialog(
         shown = shown,
-        onDismiss = onCancel
+        onDismiss = { vm.onCancel(mainOnCancel) }
     ) {
         MyColumn(
-            Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+            modifier = Modifier.padding(vertical = 10.dp)
         ) {
-            DialogTitle(
-                if (algorithm == Algorithm.AES) R.string.pick_key
-                else R.string.pick_keypair
-            )
+            DialogTitle(R.string.pick_key)
 
-            MyLazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 30.dp),
-                lazyList = {
-                    itemsIndexed(st.items) { i, key ->
-                        MyClickableText(
-                            text = key.name,
-                            onClick = { vm.onKeySelected(key, mainOnKeySelected) }
+            MyColumn(
+                Modifier.height(300.dp)
+            ) {
+                if (st.loading) Loading()
+                else {
+                    MyColumn(
+                        Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                    ) {
+                        if (algorithm == Algorithm.RSA) {
+                            MyCheckbox(
+                                text = stringResource(R.string.from_key_store),
+                                initialState = st.fromKeyStore,
+                                onCheckedChange = { vm.onFromKeyStoreCheckedCh(it) },
+                            )
+                        }
+
+                        MyLazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 30.dp),
+                            lazyList = {
+                                itemsIndexed(st.items) { i, key ->
+                                    MyClickableText(
+                                        text = key.name,
+                                        onClick = { vm.onKeySelected(key, mainOnKeySelected) }
+                                    )
+
+                                    if (i != st.items.lastIndex) MyHorizontalDivider()
+                                }
+                            }
                         )
-
-                        if (i != st.items.lastIndex) MyHorizontalDivider()
                     }
                 }
-            )
+            }
 
             SecondaryPillBtn(
                 text = stringResource(R.string.cancel),
-                onClick = onCancel
+                onClick = { vm.onCancel(mainOnCancel) }
             )
         }
     }

@@ -55,7 +55,20 @@ class AESKeyGenVM @Inject constructor(
 
         val secret =
             if (_uiState.value.generateChecked) Cryptography.generateAESKey()
-            else Converter.toSecretKey(Converter.decode(value))
+            else {
+                try {
+                    val bytes = Converter.decode(value)
+
+                    if (bytes.size != 16) throw java.lang.IllegalArgumentException()
+
+                    Converter.toSecretKey(bytes)
+                } catch (e: java.lang.IllegalArgumentException) {
+                    _uiState.update { it.copy(
+                        valueInvalid = true
+                    )}
+                    return
+                }
+            }
 
         val key = AESKey(
             name = name,

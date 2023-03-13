@@ -41,10 +41,17 @@ class RSAKeyGenVM @Inject constructor(
     }
 
     fun onGenerateCheckChange(checked: Boolean) {
-        _uiState.update { it.copy(
-            generateChecked = checked,
-            valueInvalid = false
-        )}
+        if (checked) {
+            _uiState.update { it.copy(
+                generateChecked = true,
+                valueInvalid = false
+            )}
+        }
+        else {
+            _uiState.update { it.copy(
+                generateChecked = false
+            )}
+        }
     }
 
     fun onSubmit(mainOnSubmit: (RSAKeyPair) -> Unit) {
@@ -57,10 +64,29 @@ class RSAKeyGenVM @Inject constructor(
 
         val public =
             if (_uiState.value.generateChecked) genKey!!.public
-            else Converter.toPublicKey(publicVal)
+            else {
+                try {
+                    Converter.toPublicKey(publicVal)
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(
+                        valueInvalid = true
+                    )}
+                    return
+                }
+            }
+
         val private =
             if (_uiState.value.generateChecked) genKey!!.private
-            else Converter.toPrivateKey(privateVal)
+            else {
+                try {
+                    Converter.toPrivateKey(privateVal)
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(
+                        valueInvalid = true
+                    )}
+                    return
+                }
+            }
 
         val key = RSAKeyPair(
             name = name,

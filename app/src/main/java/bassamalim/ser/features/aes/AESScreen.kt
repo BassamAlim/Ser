@@ -115,7 +115,7 @@ fun AESUI(
         KeyPickerDlg(
             shown = st.keyPickerShown,
             algorithm = Algorithm.AES,
-            onCancel = vm::onKeyPickerCancel,
+            mainOnCancel = vm::onKeyPickerCancel,
             mainOnKeySelected = { vm.onKeySelected(it as AESKey) },
         )
 

@@ -42,20 +42,6 @@ fun MyParentColumn(
 }
 
 @Composable
-fun MyFatColumn(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        content()
-    }
-}
-
-@Composable
 fun MyColumn(
     modifier: Modifier = Modifier,
     alignment: Alignment.Horizontal = Alignment.CenterHorizontally,

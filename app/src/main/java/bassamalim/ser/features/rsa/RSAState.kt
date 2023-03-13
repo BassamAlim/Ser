@@ -6,6 +6,7 @@ data class RSAState(
     val keyName: String = "",
     val publicKey: String = "",
     val privateKey: String = "",
+    val storeKey: Boolean = false,
     val operation: Operation = Operation.ENCRYPT,
     val result: String = "",
     val newKeyDialogShown: Boolean = false,

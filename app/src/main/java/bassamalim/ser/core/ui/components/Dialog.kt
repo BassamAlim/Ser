@@ -1,12 +1,13 @@
 package bassamalim.ser.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -107,22 +108,12 @@ fun TutorialDialog(
 
                         MyText(stringResource(textResId))
 
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            MyCheckbox(
-                                isChecked = doNotShowAgain,
-                                onCheckedChange = { doNotShowAgain = it }
-                            )
-
-                            MyText(
-                                stringResource(R.string.do_not_show_again),
-                                textColor = AppTheme.colors.accent
-                            )
-                        }
+                        MyCheckbox(
+                            text = stringResource(R.string.generate),
+                            onCheckedChange = {
+                                doNotShowAgain = it
+                            },
+                        )
                     }
                 }
             }
