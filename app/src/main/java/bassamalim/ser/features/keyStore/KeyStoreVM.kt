@@ -25,12 +25,11 @@ class KeyStoreVM @Inject constructor(
     init {
         val publishedKeyName = repo.getPublishedKeyName()
 
-        var deviceRegistered = true
         viewModelScope.launch {
-            deviceRegistered = repo.deviceRegistered(deviceId)
+            val deviceRegistered = repo.deviceRegistered(deviceId)
+            if (publishedKeyName.isEmpty() && deviceRegistered)
+                removeOldKey()
         }
-        if (publishedKeyName.isEmpty() && deviceRegistered)
-            removeOldKey()
 
         viewModelScope.launch {
             _uiState.update { it.copy(
