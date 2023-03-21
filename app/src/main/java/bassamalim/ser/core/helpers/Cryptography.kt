@@ -1,5 +1,6 @@
 package bassamalim.ser.core.helpers
 
+import android.util.Log
 import bassamalim.ser.core.models.MyKeyPair
 import bassamalim.ser.core.utils.Converter
 import java.security.KeyPairGenerator
@@ -14,7 +15,9 @@ import javax.crypto.spec.IvParameterSpec
 object Cryptography {
 
     fun generateAESKey(): SecretKey {
-        return KeyGenerator.getInstance("AES").generateKey()
+        val keyGen = KeyGenerator.getInstance("AES")
+        keyGen.init(256, SecureRandom())
+        return keyGen.generateKey()
     }
 
     private fun generateAESIV(): ByteArray {
@@ -26,19 +29,24 @@ object Cryptography {
     fun encryptAES(
         plaintext: String,
         secretKey: SecretKey
-    ): String {
+    ): String? {
         val bytes = plaintext.toByteArray()
         val ivSpec = IvParameterSpec(generateAESIV())
 
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
-        val ciphertext = cipher.doFinal(bytes)
+        return try {
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
+            val ciphertext = cipher.doFinal(bytes)
 
-        val cipherArr = ByteArray(ivSpec.iv.size + ciphertext.size)
-        System.arraycopy(ivSpec.iv, 0, cipherArr, 0, ivSpec.iv.size)
-        System.arraycopy(ciphertext, 0, cipherArr, ivSpec.iv.size, ciphertext.size)
+            val cipherArr = ByteArray(ivSpec.iv.size + ciphertext.size)
+            System.arraycopy(ivSpec.iv, 0, cipherArr, 0, ivSpec.iv.size)
+            System.arraycopy(ciphertext, 0, cipherArr, ivSpec.iv.size, ciphertext.size)
 
-        return Converter.encode(cipherArr)
+            Converter.encode(cipherArr)
+        } catch (e: Exception) {
+            Log.e("Cryptography", e.toString())
+            null
+        }
     }
 
     fun decryptAES(
@@ -51,19 +59,23 @@ object Cryptography {
             val iv = decoded.copyOfRange(0, 16)
             val decodedCT = decoded.copyOfRange(16, decoded.size)
 
+            println("Here")
             val ivSpec = IvParameterSpec(iv)
 
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
             val plaintext = cipher.doFinal(decodedCT)
             plaintext.decodeToString()
-        } catch (e: Exception) { null }
+        } catch (e: Exception) {
+            Log.e("Cryptography", e.toString())
+            null
+        }
     }
 
 
     fun generateRSAKey(): MyKeyPair {
         val kpg = KeyPairGenerator.getInstance("RSA")
-        kpg.initialize(256, SecureRandom())
+        kpg.initialize(2048, SecureRandom())
         val keyPair = kpg.genKeyPair()
         return MyKeyPair(
             public = keyPair.public,
@@ -74,14 +86,19 @@ object Cryptography {
     fun encryptRSA(
         plaintext: String,
         publicKey: PublicKey
-    ): String {
+    ): String? {
         val bytes = plaintext.toByteArray()
 
-        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-        val ciphertext = cipher.doFinal(bytes)
+        return try {
+            val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+            val ciphertext = cipher.doFinal(bytes)
 
-        return Converter.encode(ciphertext)
+            Converter.encode(ciphertext)
+        } catch (e: Exception) {
+            Log.e("Cryptography", e.toString())
+            null
+        }
     }
 
     fun decryptRSA(
@@ -95,7 +112,10 @@ object Cryptography {
             cipher.init(Cipher.DECRYPT_MODE, privateKey)
 
             cipher.doFinal(decoded).decodeToString()
-        } catch (e: Exception) { null }
+        } catch (e: Exception) {
+            Log.e("Cryptography", e.toString())
+            null
+        }
     }
 
 }
