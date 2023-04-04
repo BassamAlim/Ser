@@ -1,13 +1,20 @@
 package bassamalim.ser.features.aes
 
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,6 +35,7 @@ fun AESUI(
     vm: AESVM = hiltViewModel()
 ) {
     val st by vm.uiState.collectAsState()
+    val ctx = LocalContext.current
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var scrolled = false
@@ -65,6 +73,36 @@ fun AESUI(
                 .width(350.dp)
                 .height(200.dp)
         )
+
+        MyText(
+            "OR",
+            fontSize = 24.sp
+        )
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = { uri: Uri? -> vm.onFileImportResult(uri) }
+        )
+
+        MyClickableSurface(
+            color = AppTheme.colors.secondary,
+            cornerRadius = 20.dp,
+            modifier = Modifier.padding(horizontal = 30.dp),
+            onClick = {
+                launcher.launch("*/*")
+            }
+        ) {
+            MyColumn {
+                MyText(stringResource(R.string.import_file))
+
+                Icon(
+                    painter = painterResource(R.drawable.ic_import),
+                    contentDescription = stringResource(R.string.import_file)
+                )
+
+                MyText(st.importedFileName)
+            }
+        }
 
         PrimaryPillBtn(
             text =
@@ -124,6 +162,16 @@ fun AESUI(
             onCancel = vm::onNewKeyDlgCancel,
             mainOnSubmit = { vm.onNewKeyDlgSubmit(it) }
         )
+    }
+
+    if (st.shouldShowFileSaved != 0) {
+        LaunchedEffect(st.shouldShowFileSaved) {
+            Toast.makeText(
+                ctx,
+                ctx.getString(R.string.file_saved),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }
 

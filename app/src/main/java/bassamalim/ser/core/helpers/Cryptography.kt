@@ -2,7 +2,6 @@ package bassamalim.ser.core.helpers
 
 import android.util.Log
 import bassamalim.ser.core.models.MyKeyPair
-import bassamalim.ser.core.utils.Converter
 import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -27,10 +26,9 @@ object Cryptography {
     }
 
     fun encryptAES(
-        plaintext: String,
+        bytes: ByteArray,
         secretKey: SecretKey
-    ): String? {
-        val bytes = plaintext.toByteArray()
+    ): ByteArray? {
         val ivSpec = IvParameterSpec(generateAESIV())
 
         return try {
@@ -42,7 +40,7 @@ object Cryptography {
             System.arraycopy(ivSpec.iv, 0, cipherArr, 0, ivSpec.iv.size)
             System.arraycopy(ciphertext, 0, cipherArr, ivSpec.iv.size, ciphertext.size)
 
-            Converter.encode(cipherArr)
+            cipherArr
         } catch (e: Exception) {
             Log.e("Cryptography", e.toString())
             null
@@ -50,22 +48,18 @@ object Cryptography {
     }
 
     fun decryptAES(
-        ciphertext: String,
+        bytes: ByteArray,
         secretKey: SecretKey
-    ): String? {
+    ): ByteArray? {
         return try {
-            val decoded = Converter.decode(ciphertext)
-
-            val iv = decoded.copyOfRange(0, 16)
-            val decodedCT = decoded.copyOfRange(16, decoded.size)
-
-            println("Here")
+            val iv = bytes.copyOfRange(0, 16)
+            val decodedCT = bytes.copyOfRange(16, bytes.size)
             val ivSpec = IvParameterSpec(iv)
 
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
-            val plaintext = cipher.doFinal(decodedCT)
-            plaintext.decodeToString()
+
+            cipher.doFinal(decodedCT)
         } catch (e: Exception) {
             Log.e("Cryptography", e.toString())
             null
@@ -84,17 +78,13 @@ object Cryptography {
     }
 
     fun encryptRSA(
-        plaintext: String,
+        bytes: ByteArray,
         publicKey: PublicKey
-    ): String? {
-        val bytes = plaintext.toByteArray()
-
+    ): ByteArray? {
         return try {
             val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
             cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-            val ciphertext = cipher.doFinal(bytes)
-
-            Converter.encode(ciphertext)
+            cipher.doFinal(bytes)
         } catch (e: Exception) {
             Log.e("Cryptography", e.toString())
             null
@@ -102,16 +92,13 @@ object Cryptography {
     }
 
     fun decryptRSA(
-        ciphertext: String,
+        bytes: ByteArray,
         privateKey: PrivateKey
-    ): String? {
+    ): ByteArray? {
         return try {
-            val decoded = Converter.decode(ciphertext)
-
             val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
             cipher.init(Cipher.DECRYPT_MODE, privateKey)
-
-            cipher.doFinal(decoded).decodeToString()
+            cipher.doFinal(bytes)
         } catch (e: Exception) {
             Log.e("Cryptography", e.toString())
             null

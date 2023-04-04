@@ -25,14 +25,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var sp: SharedPreferences
-//    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        init()
-
-        handleAction(intent.action)
+        sp = PrefUtils.getPreferences(this)
 
         preLaunch()
 
@@ -41,20 +38,6 @@ class MainActivity : ComponentActivity() {
         postLaunch()
     }
 
-    private fun init() {
-        sp = PrefUtils.getPreferences(this)
-//        db = DBUtils.getDB(this)
-    }
-
-    private fun handleAction(action: String?) {
-        if (action == null) return
-
-        /*when (action) {
-            Global.### -> {
-
-            }
-        }*/
-    }
 
     private fun preLaunch() {
         DBUtils.testDB(this, sp)
@@ -125,13 +108,4 @@ class MainActivity : ComponentActivity() {
             }
     }
 
-    /*private fun setupBootReceiver() {
-        packageManager.setComponentEnabledSetting(
-            ComponentName(this, DeviceBootReceiver::class.java),
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
-    }*/
-
 }
-

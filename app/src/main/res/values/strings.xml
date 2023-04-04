@@ -273,5 +273,7 @@
     <string name="remove_my_key">Remove my public key</string>
     <string name="aes_description">AES is a symmetric block cipher that can encrypt and decrypt information. It is a fast and secure algorithm. It is used to encrypt and decrypt files and messages.</string>
     <string name="rsa_description">RSA is an asymmetric algorithm that uses a public key and a private key. The public key is used to encrypt information and the private key is used to decrypt the information. It is a slow algorithm but it is secure.</string>
+    <string name="file_saved">File saved to Downloads</string>
+
 
 </resources>
