@@ -3,6 +3,7 @@ package bassamalim.ser.features.aes
 import android.app.Application
 import android.net.Uri
 import android.os.Environment
+import androidx.compose.foundation.ScrollState
 import androidx.lifecycle.AndroidViewModel
 import bassamalim.ser.core.data.Prefs
 import bassamalim.ser.core.enums.Operation
@@ -11,9 +12,11 @@ import bassamalim.ser.core.models.AESKey
 import bassamalim.ser.core.utils.Converter
 import bassamalim.ser.core.utils.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -25,6 +28,8 @@ class AESVM @Inject constructor(
     repo: AESRepo
 ): AndroidViewModel(app) {
 
+    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var scrollState: ScrollState
     private var text = ""
     private var key = repo.getKey(Prefs.SelectedAESKeyName.default as String)
     private var importedFile: File? = null
@@ -32,7 +37,10 @@ class AESVM @Inject constructor(
     private val _uiState = MutableStateFlow(AESState())
     val uiState = _uiState.asStateFlow()
 
-    fun onStart() {
+    fun onStart(coroutineScope: CoroutineScope, scrollState: ScrollState) {
+        this.coroutineScope = coroutineScope
+        this.scrollState = scrollState
+
         _uiState.update { it.copy(
             keyName = key.name,
             secretKey = key.asString()
@@ -114,16 +122,25 @@ class AESVM @Inject constructor(
         )}
     }
 
+
     fun onExecute() {
         if (text.isEmpty() && importedFile == null) return
 
         if (uiState.value.operation == Operation.ENCRYPT) {
             if (importedFile == null) encryptText()
             else encryptFile()
+
+            coroutineScope.launch {
+                scrollState.animateScrollTo(Int.MAX_VALUE)
+            }
         }
         else {
             if (importedFile == null) decryptText()
             else decryptFile()
+
+            coroutineScope.launch {
+                scrollState.animateScrollTo(Int.MAX_VALUE)
+            }
         }
     }
 

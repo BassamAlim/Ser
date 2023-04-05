@@ -11,11 +11,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +27,6 @@ import bassamalim.ser.core.ui.components.*
 import bassamalim.ser.core.ui.theme.AppTheme
 import bassamalim.ser.features.aesKeyGen.AESKeyGenDlg
 import bassamalim.ser.features.keyPicker.KeyPickerDlg
-import kotlinx.coroutines.launch
 
 @Composable
 fun AESUI(
@@ -36,12 +34,15 @@ fun AESUI(
 ) {
     val st by vm.uiState.collectAsState()
     val ctx = LocalContext.current
-    val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
-    var scrolled = false
+    val scrollState = rememberScrollState()
+    val fileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? -> vm.onFileImportResult(uri) }
+    )
 
     DisposableEffect(key1 = vm) {
-        vm.onStart()
+        vm.onStart(coroutineScope, scrollState)
         onDispose {}
     }
 
@@ -60,6 +61,7 @@ fun AESUI(
             isRight = st.operation == Operation.DECRYPT,
             leftText = stringResource(R.string.encryption),
             rightText = stringResource(R.string.decryption),
+            modifier = Modifier.padding(bottom = 30.dp),
             onSwitch = { vm.onOpSwitch(it) }
         )
 
@@ -71,36 +73,43 @@ fun AESUI(
             onValueChange = { vm.onTextChange(it) },
             modifier = Modifier
                 .width(350.dp)
-                .height(200.dp)
+                .height(180.dp)
         )
 
         MyText(
             "OR",
-            fontSize = 24.sp
-        )
-
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-            onResult = { uri: Uri? -> vm.onFileImportResult(uri) }
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
         )
 
         MyClickableSurface(
             color = AppTheme.colors.secondary,
             cornerRadius = 20.dp,
-            modifier = Modifier.padding(horizontal = 30.dp),
+            modifier = Modifier.padding(horizontal = 40.dp),
             onClick = {
-                launcher.launch("*/*")
+                fileLauncher.launch("*/*")
             }
         ) {
-            MyColumn {
-                MyText(stringResource(R.string.import_file))
+            MyColumn(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                if (st.importedFileName.isNotEmpty()) {
+                    MyText(st.importedFileName)
+                }
 
                 Icon(
                     painter = painterResource(R.drawable.ic_import),
-                    contentDescription = stringResource(R.string.import_file)
+                    contentDescription = stringResource(R.string.import_file),
+                    tint = AppTheme.colors.text,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(vertical = 10.dp)
                 )
 
-                MyText(st.importedFileName)
+                MyText(
+                    stringResource(R.string.import_file),
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
 
@@ -108,7 +117,7 @@ fun AESUI(
             text =
                 if (st.operation == Operation.ENCRYPT) stringResource(R.string.encrypt)
                 else stringResource(R.string.decrypt),
-            padding = PaddingValues(vertical = 20.dp),
+            padding = PaddingValues(top = 50.dp, bottom = 20.dp),
             onClick = vm::onExecute
         )
 
@@ -133,16 +142,6 @@ fun AESUI(
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
                             .padding(bottom = 20.dp, start = 5.dp, end = 5.dp)
-                            .onGloballyPositioned { layoutCoordinates ->
-                                if (!scrolled) {
-                                    coroutineScope.launch {
-                                        scrollState.animateScrollTo(
-                                            layoutCoordinates.positionInWindow().y.toInt()
-                                        )
-                                        scrolled = true
-                                    }
-                                }
-                            }
                     )
                 }
 
