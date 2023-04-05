@@ -1,6 +1,14 @@
 # Ser
 A native Android app that allows users to encrypt and decrypt text and files using AES and RSA.
 
+<table>
+  <tr>
+    <td><img src="[path/to/image1](https://user-images.githubusercontent.com/65797540/230176137-edcc26b9-9736-486e-aaf2-47ff19be605e.jpg)"></td>
+    <td><img src="[path/to/image2](https://user-images.githubusercontent.com/65797540/230176453-3b5a23aa-e892-44bc-a2cf-24bd5310387e.jpg)"></td>
+  </tr>
+</table>
+
+
 ![Screenshot_20230405_193124_Ser](https://user-images.githubusercontent.com/65797540/230176137-edcc26b9-9736-486e-aaf2-47ff19be605e.jpg)
 
 ![Screenshot_20230405_192713_Ser](https://user-images.githubusercontent.com/65797540/230176453-3b5a23aa-e892-44bc-a2cf-24bd5310387e.jpg)
