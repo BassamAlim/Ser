@@ -5,8 +5,11 @@ import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
+import java.io.File
+import java.io.FileOutputStream
 
 object Utils {
 
@@ -32,6 +35,16 @@ object Utils {
             context.contentResolver,
             Settings.Secure.ANDROID_ID
         )
+    }
+
+    fun writeToDownloads(filename: String, bytes: ByteArray) {
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            filename
+        )
+        val outputStream = FileOutputStream(file)
+        outputStream.write(bytes)
+        outputStream.close()
     }
 
 }

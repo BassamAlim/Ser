@@ -94,7 +94,10 @@ fun AESUI(
                 modifier = Modifier.padding(10.dp)
             ) {
                 if (st.importedFileName.isNotEmpty()) {
-                    MyText(st.importedFileName)
+                    MyText(
+                        st.importedFileName,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 Icon(

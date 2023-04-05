@@ -1,5 +1,7 @@
 package bassamalim.ser.core.utils
 
+import android.content.ContentResolver
+import android.net.Uri
 import android.util.Base64
 import bassamalim.ser.core.models.MyByteKeyPair
 import bassamalim.ser.core.models.MyKeyPair
@@ -66,6 +68,13 @@ object Converter {
             publicKeyObj,
             privateKeyObj
         )
+    }
+
+    fun uriToByteArray(uri: Uri, contentResolver: ContentResolver): ByteArray? {
+        val inputStream = contentResolver.openInputStream(uri)
+        val bytes = inputStream?.readBytes()
+        inputStream?.close()
+        return bytes
     }
 
 }

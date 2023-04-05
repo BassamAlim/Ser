@@ -2,7 +2,6 @@ package bassamalim.ser.features.rsa
 
 import android.app.Application
 import android.net.Uri
-import android.os.Environment
 import androidx.compose.foundation.ScrollState
 import androidx.lifecycle.AndroidViewModel
 import bassamalim.ser.core.data.Prefs
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 import java.security.PublicKey
 import javax.inject.Inject
 
@@ -35,7 +33,7 @@ class RSAVM @Inject constructor(
     private var text = ""
     private var keyPair = repo.getKey(Prefs.SelectedRSAKeyName.default as String)
     private var publicStoreKey: PublicKey? = null
-    private var importedFile: File? = null
+    private var importedFileBytes: ByteArray? = null
 
     private val _uiState = MutableStateFlow(RSAState())
     val uiState = _uiState.asStateFlow()
@@ -142,11 +140,12 @@ class RSAVM @Inject constructor(
         if (uri == null) return
 
         val path = uri.path!!.split(":").last()
-        importedFile = File("/storage/emulated/0/$path")
-
+        val file = File("/storage/emulated/0/$path")
         _uiState.update { it.copy(
-            importedFileName = importedFile?.name ?: ""
+            importedFileName = file.name ?: ""
         )}
+
+        importedFileBytes = Converter.uriToByteArray(uri, app.contentResolver)
     }
 
     fun onCopyResult() {
@@ -158,10 +157,10 @@ class RSAVM @Inject constructor(
     }
 
     fun onExecute() {
-        if (text.isEmpty() && importedFile == null) return
+        if (text.isEmpty() && importedFileBytes == null) return
 
         if (uiState.value.operation == Operation.ENCRYPT) {
-            if (importedFile == null) encryptText()
+            if (importedFileBytes == null) encryptText()
             else encryptFile()
 
             coroutineScope.launch {
@@ -171,7 +170,7 @@ class RSAVM @Inject constructor(
         else {
             if (_uiState.value.storeKey) return  // cannot decrypt with store key
 
-            if (importedFile == null) decryptText()
+            if (importedFileBytes == null) decryptText()
             else decryptFile()
 
             coroutineScope.launch {
@@ -201,53 +200,54 @@ class RSAVM @Inject constructor(
     }
 
     private fun encryptFile() {
-        val bytes = importedFile!!.readBytes()
+        val result = Cryptography.encryptRSA(importedFileBytes!!, keyPair.key.public) ?: return
 
-        val result = Cryptography.encryptRSA(bytes, keyPair.key.public) ?: return
+        val extension = _uiState.value.importedFileName.split(".").last()
+        val fName = _uiState.value.importedFileName
+            .removeSuffix(extension)
+            .removeSuffix(".")
 
-        val fileName = importedFile!!.name
+        try {
+            Utils.writeToDownloads(
+                filename = "RSA Encrypted {$fName}.$extension",
+                bytes = result
+            )
+        } catch (e: Exception) {
+            _uiState.update { it.copy(
+                result = "Failed to save file"
+            )}
+        }
 
-        importedFile = null
         _uiState.update { it.copy(
-            importedFileName = ""
-        )}
-
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            "$fileName.RSA"
-        )
-        val outputStream = FileOutputStream(file)
-        outputStream.write(result)
-        outputStream.close()
-
-        _uiState.update { it.copy(
+            importedFileName = "",
             shouldShowFileSaved = _uiState.value.shouldShowFileSaved + 1
         )}
     }
 
     private fun decryptFile() {
-        val bytes = importedFile!!.readBytes()
+        val result = Cryptography.decryptRSA(importedFileBytes!!, keyPair.key.private) ?: return
 
-        val result = Cryptography.decryptRSA(bytes, keyPair.key.private) ?: return
+        var fName = _uiState.value.importedFileName
+            .removeSuffix(".")
+            .replaceFirst("Encrypted {", "Decrypted {")
+            .replaceFirst("AES", "RSA")
+        if (fName.startsWith("AES Encrypted {")) {
+            fName = fName.replaceFirst("AES", "RSA")
+        }
 
-        var fileName = importedFile!!.name
-        if (fileName.endsWith(".RSA"))
-            fileName = fileName.substring(0, fileName.length - 4)
+        try {
+            Utils.writeToDownloads(
+                filename = fName,
+                bytes = result
+            )
+        } catch (e: Exception) {
+            _uiState.update { it.copy(
+                result = "Failed to save file"
+            )}
+        }
 
-        importedFile = null
         _uiState.update { it.copy(
-            importedFileName = ""
-        )}
-
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            fileName
-        )
-        val outputStream = FileOutputStream(file)
-        outputStream.write(result)
-        outputStream.close()
-
-        _uiState.update { it.copy(
+            importedFileName = "",
             shouldShowFileSaved = _uiState.value.shouldShowFileSaved + 1
         )}
     }
