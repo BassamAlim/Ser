@@ -1,6 +1,14 @@
 # Ser
 A native Android app that allows users to encrypt and decrypt text and files using AES and RSA.
 
+# Uses
+- Kotlin
+- Jetpack Compose
+- MVVM
+- Hilt dependency injection
+- Single activity
+
+# Screenshots
 <table>
   <tr>
     <td>
