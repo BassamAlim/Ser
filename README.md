@@ -1,5 +1,6 @@
 # Ser
 A native Android app that allows users to encrypt and decrypt text and files using AES and RSA.
+It also includes a public repository for users to share their public keys
 
 # Uses
 - Kotlin
